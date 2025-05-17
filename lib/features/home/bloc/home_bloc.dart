@@ -55,8 +55,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final pref = await SharedPreferences.getInstance();
     final savedNames = pref.getStringList('relayNames');
     final relayNames =
-        savedNames ?? List.generate(6, (index) => 'Relay ${index + 1}');
-    final relayStates = List.filled(6, false);
+        savedNames ?? List.generate(4, (index) => 'Relay ${index + 1}');
+    final relayStates = List.filled(4, true);
     emit(
       HomeLoaded(
         isConnected: true,
