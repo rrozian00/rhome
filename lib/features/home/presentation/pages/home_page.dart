@@ -29,6 +29,21 @@ class HomePage extends StatelessWidget {
             context.read<HomeBloc>().add(LoadRelayNamesEvent());
             return Splash();
           }
+          if (state is HomeLoading) {
+            return Scaffold(
+              backgroundColor: Colors.grey[200],
+
+              body: Center(child: CircularProgressIndicator.adaptive()),
+            );
+          }
+          if (state is HomeError &&
+              state.message.trim() == "Image is not picked") {
+            context.read<HomeBloc>().add(LoadRelayNamesEvent());
+            return Scaffold(
+              backgroundColor: Colors.grey[200],
+              body: Center(child: CircularProgressIndicator.adaptive()),
+            );
+          }
 
           if (state is HomeLoaded) {
             context.read<HomeBloc>().add(LoadRelayStatusEvent());
@@ -68,7 +83,30 @@ class HomePage extends StatelessWidget {
           }
 
           return Scaffold(
-            body: const Center(child: Text('Terjadi kesalahan.')),
+            backgroundColor: Colors.grey[200],
+            body: SafeArea(
+              child: RefreshIndicator(
+                onRefresh:
+                    () async =>
+                        context.read<HomeBloc>().add(LoadRelayNamesEvent()),
+                child: ListView(
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height / 2.5),
+                    const Center(
+                      child: Text(
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
+
+                        'Terjadi kesalahan !!!\nSilahkan scroll kebawah unuk mencoba lagi !',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           );
         },
       ),

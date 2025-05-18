@@ -11,6 +11,15 @@ class LoadRelayNamesEvent extends HomeEvent {}
 
 class LoadRelayStatusEvent extends HomeEvent {}
 
+class PickImageEvent extends HomeEvent {
+  final int index;
+
+  const PickImageEvent({required this.index});
+
+  @override
+  List<Object> get props => [index];
+}
+
 class CheckConnectionEvent extends HomeEvent {}
 
 class ToggleRelayEvent extends HomeEvent {

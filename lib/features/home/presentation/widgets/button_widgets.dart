@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
+
+import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rhome/features/home/presentation/bloc/home_bloc.dart';
 import 'package:rhome/features/home/presentation/bloc/home_event.dart';
@@ -24,6 +26,9 @@ class ButtonWidgets extends StatelessWidget {
           final bloc = context.read<HomeBloc>();
           final relay = state.relayStates[index];
           return GestureDetector(
+            onDoubleTap: () {
+              context.read<HomeBloc>().add(PickImageEvent(index: index));
+            },
             onLongPress: () {
               _showRenameDialog(context, index, state.relayNames[index]);
             },
@@ -37,34 +42,69 @@ class ButtonWidgets extends StatelessWidget {
             child: AnimatedScale(
               duration: Duration(milliseconds: 300),
               scale: relay == true ? 1 : 0.95,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: relay == true ? Colors.green[700] : Colors.red[700],
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 6,
-                      spreadRadius: 6,
+              child: Stack(
+                children: [
+                  Center(
+                    child: ClipRRect(
+                      clipBehavior: Clip.hardEdge,
+                      borderRadius: BorderRadius.circular(15),
+                      child:
+                          state.imagePath[index] != ""
+                              ? Image.file(File(state.imagePath[index]))
+                              : Image.asset(
+                                "assets/icons/home.png",
+                                color:
+                                    relay == true
+                                        ? Colors.green[700]
+                                        : Colors.red[700],
+                              ),
                     ),
-                  ],
-                  // shape: BoxShape.circle,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(
-                        state.relayNames[index],
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                      Text(
-                        relay == true ? "ON" : "OFF",
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                    ],
                   ),
-                ),
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color:
+                                relay == true
+                                    ? Colors.green[700]
+                                    : Colors.red[700],
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  state.relayNames[index],
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  relay == true ? "ON" : "OFF",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           );

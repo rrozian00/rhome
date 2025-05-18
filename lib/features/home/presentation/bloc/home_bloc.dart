@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:rhome/features/home/data/local/image_repository.dart';
 import 'package:rhome/features/home/data/remote/home_repository.dart';
 
 import 'package:rhome/features/home/presentation/bloc/home_event.dart';
@@ -11,9 +12,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final _homeRepo = HomeRepository();
+  final _imageRepo = ImageRepository();
   late StreamSubscription _connectionStream;
 
   HomeBloc() : super(HomeInitial()) {
+    on<PickImageEvent>(_onPickImage);
     on<LoadRelayNamesEvent>(_onLoadRelayNames);
     on<LoadRelayStatusEvent>(_checkRelayStatus);
     on<ToggleRelayEvent>(_onToggleRelay);
@@ -75,7 +78,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           ) {
             updatedStates[i] = relayStatuses[i];
           }
-
           emit(currentState.copyWith(relayStates: updatedStates));
         },
       );
@@ -86,17 +88,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     LoadRelayNamesEvent event,
     Emitter<HomeState> emit,
   ) async {
+    emit(HomeLoading());
     await Future.delayed(Duration(milliseconds: 1000));
     final pref = await SharedPreferences.getInstance();
     final savedNames = pref.getStringList('relayNames');
     final relayNames =
         savedNames ?? List.generate(4, (index) => 'Relay ${index + 1}');
     final relayStates = List.filled(4, true);
+    final imagePath = await _imageRepo.getImages();
+
     emit(
       HomeLoaded(
         isConnected: true,
         relayNames: relayNames,
         relayStates: relayStates,
+        imagePath: imagePath.getOrElse(() => List.filled(4, "")),
       ),
     );
   }
@@ -148,6 +154,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       },
       (res) {
         add(ToggleRelayEvent(index: event.index, value: false));
+      },
+    );
+  }
+
+  Future<void> _onPickImage(
+    PickImageEvent event,
+    Emitter<HomeState> emit,
+  ) async {
+    emit(HomeLoading());
+    final result = await _imageRepo.setImage(event.index);
+    result.fold(
+      (err) {
+        emit(HomeError(message: err.message));
+      },
+      (r) {
+        emit(HomeInitial());
       },
     );
   }
