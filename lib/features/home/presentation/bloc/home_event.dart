@@ -9,6 +9,8 @@ abstract class HomeEvent extends Equatable {
 
 class LoadRelayNamesEvent extends HomeEvent {}
 
+class LoadRelayStatusEvent extends HomeEvent {}
+
 class CheckConnectionEvent extends HomeEvent {}
 
 class ToggleRelayEvent extends HomeEvent {

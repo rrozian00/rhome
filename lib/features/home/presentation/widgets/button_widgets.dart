@@ -4,71 +4,74 @@ import 'package:rhome/features/home/presentation/bloc/home_bloc.dart';
 import 'package:rhome/features/home/presentation/bloc/home_event.dart';
 import 'package:rhome/features/home/presentation/bloc/home_state.dart';
 
-Widget buttonWidget({
-  required BuildContext context,
-  required int lenght,
-  required HomeLoaded state,
-}) {
-  return Padding(
-    padding: const EdgeInsets.all(16.0),
-    child: GridView.builder(
-      itemCount: lenght,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 20,
-        mainAxisSpacing: 20,
-      ),
-      itemBuilder: (context, index) {
-        final bloc = context.read<HomeBloc>();
-        final relay = state.relayStates[index];
-        return GestureDetector(
-          onLongPress: () {
-            _showRenameDialog(context, index, state.relayNames[index]);
-          },
-          onTap: () {
-            if (relay) {
-              bloc.add(TurnOffRelayEvent(index));
-            } else {
-              bloc.add(TurnOnRelayEvent(index));
-            }
-          },
-          child: AnimatedScale(
-            duration: Duration(milliseconds: 300),
-            scale: relay == true ? 1 : 0.95,
-            child: Container(
-              decoration: BoxDecoration(
-                color: relay == true ? Colors.green[700] : Colors.red[700],
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 6,
-                    spreadRadius: 6,
-                  ),
-                ],
-                // shape: BoxShape.circle,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      state.relayNames[index],
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                    Text(
-                      relay == true ? "ON" : "OFF",
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+class ButtonWidgets extends StatelessWidget {
+  const ButtonWidgets({super.key, required this.length, required this.state});
+
+  final int length;
+  final HomeLoaded state;
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: GridView.builder(
+        itemCount: length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 20,
+          mainAxisSpacing: 20,
+        ),
+        itemBuilder: (context, index) {
+          final bloc = context.read<HomeBloc>();
+          final relay = state.relayStates[index];
+          return GestureDetector(
+            onLongPress: () {
+              _showRenameDialog(context, index, state.relayNames[index]);
+            },
+            onTap: () {
+              if (relay) {
+                bloc.add(TurnOffRelayEvent(index));
+              } else {
+                bloc.add(TurnOnRelayEvent(index));
+              }
+            },
+            child: AnimatedScale(
+              duration: Duration(milliseconds: 300),
+              scale: relay == true ? 1 : 0.95,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: relay == true ? Colors.green[700] : Colors.red[700],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 6,
+                      spreadRadius: 6,
                     ),
                   ],
+                  // shape: BoxShape.circle,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        state.relayNames[index],
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                      Text(
+                        relay == true ? "ON" : "OFF",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      },
-    ),
-  );
+          );
+        },
+      ),
+    );
+  }
 }
 
 void _showRenameDialog(BuildContext context, int index, String currentName) {

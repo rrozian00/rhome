@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rhome/features/home/presentation/pages/splash.dart';
 import 'package:rhome/features/home/presentation/widgets/button_widgets.dart';
-import 'package:rhome/features/setting/pages/setting_view.dart';
+import 'package:rhome/features/home/presentation/widgets/header_widget.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
@@ -26,107 +27,40 @@ class HomePage extends StatelessWidget {
           if (state is HomeInitial) {
             // Load data pertama kali
             context.read<HomeBloc>().add(LoadRelayNamesEvent());
-            return Scaffold(
-              body: Stack(
-                children: [
-                  Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(30.0),
-                          child: Image.asset("assets/icons/home.png"),
-                        ),
-                        SizedBox(height: 35),
-                        CircularProgressIndicator(color: Colors.black),
-                      ],
-                    ),
-                  ),
-                  Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "RHome",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 50,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 75),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
+            return Splash();
           }
 
           if (state is HomeLoaded) {
+            context.read<HomeBloc>().add(LoadRelayStatusEvent());
             return Scaffold(
               backgroundColor: Colors.grey[200],
               appBar: PreferredSize(
                 preferredSize: Size(
                   double.infinity,
-                  35,
-                  // MediaQuery.of(context).size.height*0.5,
+                  MediaQuery.of(context).size.height * 0.5,
                 ),
-                child: SafeArea(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text(
-                        'RHome',
-                        style: TextStyle(
-                          color: Colors.black,
-
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.circle,
-                            color:
-                                state.isConnected ? Colors.green : Colors.red,
-                            size: 12,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            state.isConnected ? "Connected" : "Disconnected",
-                            style: TextStyle(
-                              color:
-                                  state.isConnected ? Colors.green : Colors.red,
-                            ),
-                          ),
-                        ],
-                      ),
-                      IconButton(
-                        onPressed:
-                            () => Navigator.pushNamed(
-                              context,
-                              SettingView.routeName,
-                            ),
-                        icon: Icon(Icons.settings),
-                      ),
-                    ],
-                  ),
-                ),
+                child:
+                // header widget
+                HeaderWidget(state: state),
               ),
               body: Column(
                 children: [
                   // Daftar relay
                   Expanded(
                     flex: 20,
-                    child: buttonWidget(
-                      state: state,
-                      context: context,
-                      lenght: state.relayStates.length,
+                    child: RefreshIndicator(
+                      onRefresh:
+                          () async => context.read<HomeBloc>().add(
+                            LoadRelayStatusEvent(),
+                          ),
+                      child: ButtonWidgets(
+                        state: state,
+                        length: state.relayStates.length,
+                      ),
                     ),
                   ),
+
+                  //sign name
                   Expanded(flex: 2, child: Text("Created By: Ricky Rozian")),
                 ],
               ),

@@ -34,4 +34,19 @@ class HomeRepository {
       return Left(Failure("Unexpexted error $e"));
     }
   }
+
+  Future<Either<Failure, List<bool>>> getRelayStatus() async {
+    try {
+      final result = await http.get(Uri.parse("http://$esp32Ip/status"));
+      if (result.statusCode == 200) {
+        final body = result.body.trim();
+        final statusList = body.split('').map((e) => e == "1").toList();
+        return Right(statusList);
+      } else {
+        return Left(Failure("The response is ${result.statusCode}"));
+      }
+    } catch (e) {
+      return Left(Failure("Unexpexted error $e"));
+    }
+  }
 }

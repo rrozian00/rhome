@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
-import 'package:rhome/features/home/data/repositories/home_repository.dart';
+import 'package:rhome/features/home/repositories/home_repository.dart';
 
 import 'package:rhome/features/home/presentation/bloc/home_event.dart';
 import 'package:rhome/features/home/presentation/bloc/home_state.dart';
@@ -11,11 +11,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final _homeRepo = HomeRepository();
-  // final String esp32Ip = "192.168.0.110"; // ← IP ESP32 kamu
   late StreamSubscription _connectionStream;
 
   HomeBloc() : super(HomeInitial()) {
     on<LoadRelayNamesEvent>(_onLoadRelayNames);
+    on<LoadRelayStatusEvent>(_checkRelayStatus);
     on<ToggleRelayEvent>(_onToggleRelay);
     on<RenameRelayEvent>(_onRenameRelay);
     on<TurnOnRelayEvent>(_onTurnOnRelay);
@@ -47,6 +47,38 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           emit(currentState.copyWith(isConnected: false));
         }
       }
+    }
+  }
+
+  Future<void> _checkRelayStatus(
+    LoadRelayStatusEvent event,
+    Emitter<HomeState> emit,
+  ) async {
+    if (state is HomeLoaded) {
+      final currentState = state as HomeLoaded;
+      final result = await _homeRepo.getRelayStatus();
+
+      result.fold(
+        (failure) {
+          emit(HomeError(message: failure.message));
+        },
+        (relayStatuses) {
+          // Jika jumlah status yang didapat beda dengan jumlah state, sesuaikan
+          List<bool> updatedStates = List.filled(
+            currentState.relayStates.length,
+            false,
+          );
+          for (
+            int i = 0;
+            i < relayStatuses.length && i < updatedStates.length;
+            i++
+          ) {
+            updatedStates[i] = relayStatuses[i];
+          }
+
+          emit(currentState.copyWith(relayStates: updatedStates));
+        },
+      );
     }
   }
 
@@ -97,7 +129,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final result = await _homeRepo.getResponseOn(event.index);
     result.fold(
       (err) {
-        print(err.message);
+        emit(HomeError(message: err.message));
       },
       (res) {
         add(ToggleRelayEvent(index: event.index, value: true));
@@ -112,7 +144,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final result = await _homeRepo.getResponseOff(event.index);
     result.fold(
       (err) {
-        print(err.message);
+        emit(HomeError(message: err.message));
       },
       (res) {
         add(ToggleRelayEvent(index: event.index, value: false));
