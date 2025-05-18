@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
-import 'package:rhome/features/home/repositories/home_repository.dart';
+import 'package:rhome/features/home/data/remote/home_repository.dart';
 
 import 'package:rhome/features/home/presentation/bloc/home_event.dart';
 import 'package:rhome/features/home/presentation/bloc/home_state.dart';
