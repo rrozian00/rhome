@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rhome/features/home/widgets/button_widgets.dart';
+import 'package:rhome/features/home/presentation/widgets/button_widgets.dart';
 import 'package:rhome/features/setting/pages/setting_view.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';

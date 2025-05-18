@@ -1,16 +1,17 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:rhome/features/home/data/repositories/home_repository.dart';
 
-import 'package:rhome/features/home/bloc/home_event.dart';
-import 'package:rhome/features/home/bloc/home_state.dart';
+import 'package:rhome/features/home/presentation/bloc/home_event.dart';
+import 'package:rhome/features/home/presentation/bloc/home_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  final String esp32Ip = "192.168.0.110"; // ← IP ESP32 kamu
+  final _homeRepo = HomeRepository();
+  // final String esp32Ip = "192.168.0.110"; // ← IP ESP32 kamu
   late StreamSubscription _connectionStream;
 
   HomeBloc() : super(HomeInitial()) {
@@ -33,7 +34,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     if (state is HomeLoaded) {
       try {
-        final response = await http.get(Uri.parse("http://$esp32Ip"));
+        final response = await http.get(
+          Uri.parse("http://${_homeRepo.esp32Ip}"),
+        );
         final currentState = state as HomeLoaded;
         if (response.statusCode == 200 && !currentState.isConnected) {
           emit(currentState.copyWith(isConnected: true));
@@ -91,47 +94,30 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     TurnOnRelayEvent event,
     Emitter<HomeState> emit,
   ) async {
-    try {
-      final response = await http.get(
-        Uri.parse("http://$esp32Ip/on${event.index + 1}"),
-      );
-
-      if (response.statusCode == 200) {
-        // final responseBody = response.body;
-        // debugPrint("Response: $responseBody");
-
-        // Perbarui status relay di aplikasi
+    final result = await _homeRepo.getResponseOn(event.index);
+    result.fold(
+      (err) {
+        print(err.message);
+      },
+      (res) {
         add(ToggleRelayEvent(index: event.index, value: true));
-      } else {
-        throw Exception('Failed to turn on relay');
-      }
-    } catch (e) {
-      debugPrint("Error: $e");
-    }
+      },
+    );
   }
 
   Future<void> _onTurnOffRelay(
     TurnOffRelayEvent event,
     Emitter<HomeState> emit,
   ) async {
-    try {
-      final response = await http.get(
-        Uri.parse("http://$esp32Ip/off${event.index + 1}"),
-      );
-
-      if (response.statusCode == 200) {
-        // // Proses JSON yang diterima
-        // final responseBody = response.body;
-        // debugPrint("Response: $responseBody");
-
-        // Perbarui status relay di aplikasi
+    final result = await _homeRepo.getResponseOff(event.index);
+    result.fold(
+      (err) {
+        print(err.message);
+      },
+      (res) {
         add(ToggleRelayEvent(index: event.index, value: false));
-      } else {
-        throw Exception('Failed to turn off relay');
-      }
-    } catch (e) {
-      debugPrint("Error: $e");
-    }
+      },
+    );
   }
 
   @override

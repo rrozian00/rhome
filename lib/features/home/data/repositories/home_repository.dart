@@ -19,4 +19,19 @@ class HomeRepository {
       return Left(Failure("Unexpexted error $e"));
     }
   }
+
+  Future<Either<Failure, http.Response>> getResponseOff(int index) async {
+    try {
+      final result = await http.get(
+        Uri.parse("http://$esp32Ip/off${index + 1}"),
+      );
+      if (result.statusCode == 200) {
+        return Right(result);
+      } else {
+        return Left(Failure("The response is ${result.statusCode}"));
+      }
+    } catch (e) {
+      return Left(Failure("Unexpexted error $e"));
+    }
+  }
 }

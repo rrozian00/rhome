@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rhome/app/routes.dart';
 import 'package:rhome/cores/preferences/colors.dart';
 import 'package:rhome/cores/preferences/themes/light_theme.dart';
-import 'package:rhome/features/home/bloc/home_bloc.dart';
+import 'package:rhome/features/home/presentation/bloc/home_bloc.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

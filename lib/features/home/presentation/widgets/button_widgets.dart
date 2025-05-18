@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rhome/features/home/bloc/home_bloc.dart';
-import 'package:rhome/features/home/bloc/home_event.dart';
-import 'package:rhome/features/home/bloc/home_state.dart';
+import 'package:rhome/features/home/presentation/bloc/home_bloc.dart';
+import 'package:rhome/features/home/presentation/bloc/home_event.dart';
+import 'package:rhome/features/home/presentation/bloc/home_state.dart';
 
 Widget buttonWidget({
   required BuildContext context,
