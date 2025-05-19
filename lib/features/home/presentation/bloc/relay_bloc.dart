@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
-import 'package:rhome/features/relay/data/local/image_repository.dart';
-import 'package:rhome/features/relay/data/remote/home_repository.dart';
+import 'package:rhome/features/home/data/local/image_repository.dart';
+import 'package:rhome/features/home/data/remote/home_repository.dart';
 
-import 'package:rhome/features/relay/presentation/blocs/relay_bloc/relay_event.dart';
-import 'package:rhome/features/relay/presentation/blocs/relay_bloc/relay_state.dart';
+import 'package:rhome/features/home/presentation/bloc/relay_event.dart';
+import 'package:rhome/features/home/presentation/bloc/relay_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RelayBloc extends Bloc<RelayEvent, RelayState> {

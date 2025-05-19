@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rhome/cores/components/text/regular_text.dart';
-import 'package:rhome/features/relay/presentation/pages/splash.dart';
-import 'package:rhome/features/relay/presentation/widgets/button_widgets.dart';
-import 'package:rhome/features/relay/presentation/widgets/error_relay_widget.dart';
-import 'package:rhome/features/relay/presentation/widgets/header_widget.dart';
+import 'package:rhome/features/home/presentation/pages/splash.dart';
+import 'package:rhome/features/home/presentation/widgets/button_widgets.dart';
+import 'package:rhome/features/home/presentation/widgets/error_relay_widget.dart';
+import 'package:rhome/features/home/presentation/widgets/header_widget.dart';
 
-import '../blocs/relay_bloc/relay_bloc.dart';
-import '../blocs/relay_bloc/relay_event.dart';
-import '../blocs/relay_bloc/relay_state.dart';
+import '../bloc/relay_bloc.dart';
+import '../bloc/relay_event.dart';
+import '../bloc/relay_state.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

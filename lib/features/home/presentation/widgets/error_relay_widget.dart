@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rhome/cores/components/components.dart';
 import 'package:rhome/cores/preferences/preferences.dart';
-import 'package:rhome/features/relay/presentation/blocs/relay_bloc/relay_bloc.dart';
-import 'package:rhome/features/relay/presentation/blocs/relay_bloc/relay_event.dart';
+import 'package:rhome/features/home/presentation/bloc/relay_bloc.dart';
+import 'package:rhome/features/home/presentation/bloc/relay_event.dart';
 
 class ErrorRelayWidget extends StatelessWidget {
   const ErrorRelayWidget({super.key});
