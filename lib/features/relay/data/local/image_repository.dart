@@ -21,6 +21,17 @@ class ImageRepository {
     }
   }
 
+  Future<Either<Failure, bool>> resetImage(int index) async {
+    try {
+      final shared = await SharedPreferences.getInstance();
+
+      final result = await shared.setString("image$index", '');
+      return Right(result);
+    } catch (e) {
+      return Left(Failure("Unexpected error $e"));
+    }
+  }
+
   Future<Either<Failure, List<String>>> getImages() async {
     try {
       final shared = await SharedPreferences.getInstance();

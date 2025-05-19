@@ -1,17 +1,17 @@
 import 'package:equatable/equatable.dart';
 
-abstract class HomeEvent extends Equatable {
-  const HomeEvent();
+abstract class RelayEvent extends Equatable {
+  const RelayEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class LoadRelayNamesEvent extends HomeEvent {}
+class LoadRelayNamesEvent extends RelayEvent {}
 
-class LoadRelayStatusEvent extends HomeEvent {}
+class LoadRelayStatusEvent extends RelayEvent {}
 
-class PickImageEvent extends HomeEvent {
+class PickImageEvent extends RelayEvent {
   final int index;
 
   const PickImageEvent({required this.index});
@@ -20,9 +20,9 @@ class PickImageEvent extends HomeEvent {
   List<Object> get props => [index];
 }
 
-class CheckConnectionEvent extends HomeEvent {}
+class CheckConnectionEvent extends RelayEvent {}
 
-class ToggleRelayEvent extends HomeEvent {
+class ToggleRelayEvent extends RelayEvent {
   final int index;
   final bool value;
 
@@ -32,7 +32,7 @@ class ToggleRelayEvent extends HomeEvent {
   List<Object> get props => [index, value];
 }
 
-class TurnOnRelayEvent extends HomeEvent {
+class TurnOnRelayEvent extends RelayEvent {
   final int index;
 
   const TurnOnRelayEvent(this.index);
@@ -41,7 +41,7 @@ class TurnOnRelayEvent extends HomeEvent {
   List<Object> get props => [index];
 }
 
-class TurnOffRelayEvent extends HomeEvent {
+class TurnOffRelayEvent extends RelayEvent {
   final int index;
 
   const TurnOffRelayEvent(this.index);
@@ -50,7 +50,16 @@ class TurnOffRelayEvent extends HomeEvent {
   List<Object> get props => [index];
 }
 
-class RenameRelayEvent extends HomeEvent {
+class ResetImage extends RelayEvent {
+  final int index;
+
+  const ResetImage(this.index);
+
+  @override
+  List<Object> get props => [index];
+}
+
+class RenameRelayEvent extends RelayEvent {
   final int index;
   final String newName;
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rhome/cores/cores.dart';
 import 'package:rhome/features/setting/pages/profile_page.dart';
 
 class SettingView extends StatelessWidget {
@@ -12,19 +13,19 @@ class SettingView extends StatelessWidget {
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: Colors.grey[200],
-        title: Text("Settings"),
+        title: SubtitleText("Settings"),
       ),
       body: SafeArea(
         child: Column(
           children: [
             ListTile(
               leading: Icon(Icons.person),
-              title: Text("Profile"),
+              title: RegularText("Profile"),
               onTap: () => Navigator.pushNamed(context, ProfilePage.routeName),
             ),
             ListTile(
               leading: Icon(Icons.near_me_rounded),
-              title: Text("Customize IP"),
+              title: RegularText("Customize IP"),
               onTap: () {},
             ),
           ],

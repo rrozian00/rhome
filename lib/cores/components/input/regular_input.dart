@@ -18,6 +18,7 @@ class RegularTextInput extends StatelessWidget {
     this.onChanged,
     this.suffix,
     this.keyboardType,
+    this.textCapitalization,
   });
 
   final String hintText;
@@ -33,6 +34,7 @@ class RegularTextInput extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final Widget? suffix;
   final TextInputType? keyboardType;
+  final TextCapitalization? textCapitalization;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +47,7 @@ class RegularTextInput extends StatelessWidget {
         ],
         TextFormField(
           controller: controller,
+          textCapitalization: textCapitalization ?? TextCapitalization.words,
           enabled: enabled,
           inputFormatters: inputFormatters,
           maxLines: maxLines,

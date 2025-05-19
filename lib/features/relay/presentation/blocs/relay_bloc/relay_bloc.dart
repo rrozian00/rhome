@@ -3,20 +3,21 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
-import 'package:rhome/features/home/data/local/image_repository.dart';
-import 'package:rhome/features/home/data/remote/home_repository.dart';
+import 'package:rhome/features/relay/data/local/image_repository.dart';
+import 'package:rhome/features/relay/data/remote/home_repository.dart';
 
-import 'package:rhome/features/home/presentation/bloc/home_event.dart';
-import 'package:rhome/features/home/presentation/bloc/home_state.dart';
+import 'package:rhome/features/relay/presentation/blocs/relay_bloc/relay_event.dart';
+import 'package:rhome/features/relay/presentation/blocs/relay_bloc/relay_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeBloc extends Bloc<HomeEvent, HomeState> {
+class RelayBloc extends Bloc<RelayEvent, RelayState> {
   final _homeRepo = HomeRepository();
   final _imageRepo = ImageRepository();
   late StreamSubscription _connectionStream;
 
-  HomeBloc() : super(HomeInitial()) {
+  RelayBloc() : super(RelayInitial()) {
     on<PickImageEvent>(_onPickImage);
+    on<ResetImage>(_onResetImage);
     on<LoadRelayNamesEvent>(_onLoadRelayNames);
     on<LoadRelayStatusEvent>(_checkRelayStatus);
     on<ToggleRelayEvent>(_onToggleRelay);
@@ -33,19 +34,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> _checkConnection(
     CheckConnectionEvent event,
-    Emitter<HomeState> emit,
+    Emitter<RelayState> emit,
   ) async {
-    if (state is HomeLoaded) {
+    if (state is RelayLoaded) {
       try {
         final response = await http.get(
           Uri.parse("http://${_homeRepo.esp32Ip}"),
         );
-        final currentState = state as HomeLoaded;
+        final currentState = state as RelayLoaded;
         if (response.statusCode == 200 && !currentState.isConnected) {
           emit(currentState.copyWith(isConnected: true));
         }
       } catch (e) {
-        final currentState = state as HomeLoaded;
+        final currentState = state as RelayLoaded;
         if (currentState.isConnected) {
           emit(currentState.copyWith(isConnected: false));
         }
@@ -55,15 +56,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> _checkRelayStatus(
     LoadRelayStatusEvent event,
-    Emitter<HomeState> emit,
+    Emitter<RelayState> emit,
   ) async {
-    if (state is HomeLoaded) {
-      final currentState = state as HomeLoaded;
+    if (state is RelayLoaded) {
+      final currentState = state as RelayLoaded;
       final result = await _homeRepo.getRelayStatus();
 
       result.fold(
         (failure) {
-          emit(HomeError(message: failure.message));
+          emit(RelayError(message: failure.message));
         },
         (relayStatuses) {
           // Jika jumlah status yang didapat beda dengan jumlah state, sesuaikan
@@ -86,19 +87,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   void _onLoadRelayNames(
     LoadRelayNamesEvent event,
-    Emitter<HomeState> emit,
+    Emitter<RelayState> emit,
   ) async {
-    emit(HomeLoading());
+    emit(RelayLoading());
     await Future.delayed(Duration(milliseconds: 1000));
     final pref = await SharedPreferences.getInstance();
     final savedNames = pref.getStringList('relayNames');
     final relayNames =
-        savedNames ?? List.generate(4, (index) => 'Relay ${index + 1}');
+        savedNames ?? List.generate(4, (index) => 'Ruang ${index + 1}');
     final relayStates = List.filled(4, true);
     final imagePath = await _imageRepo.getImages();
 
     emit(
-      HomeLoaded(
+      RelayLoaded(
         isConnected: true,
         relayNames: relayNames,
         relayStates: relayStates,
@@ -107,18 +108,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
   }
 
-  void _onToggleRelay(ToggleRelayEvent event, Emitter<HomeState> emit) {
-    if (state is HomeLoaded) {
-      final currentState = state as HomeLoaded;
+  void _onToggleRelay(ToggleRelayEvent event, Emitter<RelayState> emit) {
+    if (state is RelayLoaded) {
+      final currentState = state as RelayLoaded;
       final updatedStates = List<bool>.from(currentState.relayStates);
       updatedStates[event.index] = event.value;
       emit(currentState.copyWith(relayStates: updatedStates));
     }
   }
 
-  void _onRenameRelay(RenameRelayEvent event, Emitter<HomeState> emit) async {
-    if (state is HomeLoaded) {
-      final currentState = state as HomeLoaded;
+  void _onRenameRelay(RenameRelayEvent event, Emitter<RelayState> emit) async {
+    if (state is RelayLoaded) {
+      final currentState = state as RelayLoaded;
       final updatedNames = List<String>.from(currentState.relayNames);
       updatedNames[event.index] = event.newName;
 
@@ -130,12 +131,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> _onTurnOnRelay(
     TurnOnRelayEvent event,
-    Emitter<HomeState> emit,
+    Emitter<RelayState> emit,
   ) async {
     final result = await _homeRepo.getResponseOn(event.index);
     result.fold(
       (err) {
-        emit(HomeError(message: err.message));
+        emit(RelayError(message: err.message));
       },
       (res) {
         add(ToggleRelayEvent(index: event.index, value: true));
@@ -145,12 +146,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> _onTurnOffRelay(
     TurnOffRelayEvent event,
-    Emitter<HomeState> emit,
+    Emitter<RelayState> emit,
   ) async {
     final result = await _homeRepo.getResponseOff(event.index);
     result.fold(
       (err) {
-        emit(HomeError(message: err.message));
+        emit(RelayError(message: err.message));
       },
       (res) {
         add(ToggleRelayEvent(index: event.index, value: false));
@@ -160,16 +161,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> _onPickImage(
     PickImageEvent event,
-    Emitter<HomeState> emit,
+    Emitter<RelayState> emit,
   ) async {
-    emit(HomeLoading());
+    emit(RelayLoading());
     final result = await _imageRepo.setImage(event.index);
     result.fold(
       (err) {
-        emit(HomeError(message: err.message));
+        emit(RelayError(message: err.message));
       },
-      (r) {
-        emit(HomeInitial());
+      (_) {
+        emit(RelayInitial());
       },
     );
   }
@@ -178,5 +179,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future<void> close() {
     _connectionStream.cancel();
     return super.close();
+  }
+
+  Future<void> _onResetImage(ResetImage event, Emitter<RelayState> emit) async {
+    emit(RelayLoading());
+    final result = await _imageRepo.resetImage(event.index);
+    result.fold(
+      (err) {
+        emit(RelayError(message: err.message));
+      },
+      (_) {
+        emit(RelayInitial());
+      },
+    );
   }
 }

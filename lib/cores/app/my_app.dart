@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rhome/cores/app/routes.dart';
 import 'package:rhome/cores/preferences/colors.dart';
 import 'package:rhome/cores/preferences/themes/light_theme.dart';
-import 'package:rhome/features/home/presentation/bloc/home_bloc.dart';
+import 'package:rhome/features/relay/presentation/blocs/relay_bloc/relay_bloc.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -11,16 +11,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomeBloc(),
+      create: (context) => RelayBloc(),
       child: MaterialApp(
-        // initialRoute: "/",
-        // routes: {
-        //   "/": (context) => HomeView(),
-        //   "/setting": (context) => SettingView(),
-        // },
         onGenerateRoute: routes,
         title: 'RHome',
-        theme: LightTheme(AppColors.green).theme,
+        theme: LightTheme(AppColors.black).theme,
       ),
     );
   }

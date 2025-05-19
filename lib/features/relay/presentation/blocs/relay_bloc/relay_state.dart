@@ -1,54 +1,64 @@
 import 'package:equatable/equatable.dart';
 
-abstract class HomeState extends Equatable {
-  const HomeState();
+abstract class RelayState extends Equatable {
+  const RelayState();
 
   @override
   List<Object> get props => [];
 }
 
-class HomeInitial extends HomeState {}
+class RelayInitial extends RelayState {}
 
-class HomeLoading extends HomeState {}
+class RelayLoading extends RelayState {}
 
-// class HomeOffState extends HomeState {}
+// class RelayOffState extends RelayState {}
 
-class HomeLoaded extends HomeState {
+class RelayLoaded extends RelayState {
   final bool isConnected;
   final List<String> relayNames;
   final List<bool> relayStates;
   final List<String> imagePath;
+  // final List<String> icons;
 
-  const HomeLoaded({
+  const RelayLoaded({
     required this.isConnected,
     required this.relayNames,
     required this.relayStates,
     required this.imagePath,
+    // required this.icons,
   });
 
   @override
-  List<Object> get props => [isConnected, relayNames, relayStates, imagePath];
+  List<Object> get props => [
+    isConnected,
+    relayNames,
+    relayStates,
+    imagePath,
+    // icons,
+  ];
 
-  HomeLoaded copyWith({
+  RelayLoaded copyWith({
     bool? isConnected,
     List<String>? relayNames,
     List<bool>? relayStates,
     List<String>? imagePath,
+    // List<String>? icons,
   }) {
-    return HomeLoaded(
+    return RelayLoaded(
       isConnected: isConnected ?? this.isConnected,
       relayNames: relayNames ?? this.relayNames,
       relayStates: relayStates ?? this.relayStates,
       imagePath: imagePath ?? this.imagePath,
+      // icons: icons ?? this.icons,
     );
   }
 }
 
 // State untuk menangani error
-class HomeError extends HomeState {
+class RelayError extends RelayState {
   final String message;
 
-  const HomeError({required this.message});
+  const RelayError({required this.message});
 
   @override
   List<Object> get props => [message];

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rhome/features/home/presentation/pages/splash.dart';
-import 'package:rhome/features/home/presentation/widgets/button_widgets.dart';
-import 'package:rhome/features/home/presentation/widgets/header_widget.dart';
-import '../bloc/home_bloc.dart';
-import '../bloc/home_event.dart';
-import '../bloc/home_state.dart';
+import 'package:rhome/cores/components/text/regular_text.dart';
+import 'package:rhome/features/relay/presentation/pages/splash.dart';
+import 'package:rhome/features/relay/presentation/widgets/button_widgets.dart';
+import 'package:rhome/features/relay/presentation/widgets/error_relay_widget.dart';
+import 'package:rhome/features/relay/presentation/widgets/header_widget.dart';
+
+import '../blocs/relay_bloc/relay_bloc.dart';
+import '../blocs/relay_bloc/relay_event.dart';
+import '../blocs/relay_bloc/relay_state.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -14,39 +17,39 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<HomeBloc, HomeState>(
+    return BlocListener<RelayBloc, RelayState>(
       listener: (context, state) {
-        if (state is HomeError) {
+        if (state is RelayError) {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
-      child: BlocBuilder<HomeBloc, HomeState>(
+      child: BlocBuilder<RelayBloc, RelayState>(
         builder: (context, state) {
-          if (state is HomeInitial) {
+          if (state is RelayInitial) {
             // Load data pertama kali
-            context.read<HomeBloc>().add(LoadRelayNamesEvent());
+            context.read<RelayBloc>().add(LoadRelayNamesEvent());
             return Splash();
           }
-          if (state is HomeLoading) {
+          if (state is RelayLoading) {
             return Scaffold(
               backgroundColor: Colors.grey[200],
 
               body: Center(child: CircularProgressIndicator.adaptive()),
             );
           }
-          if (state is HomeError &&
+          if (state is RelayError &&
               state.message.trim() == "Image is not picked") {
-            context.read<HomeBloc>().add(LoadRelayNamesEvent());
+            context.read<RelayBloc>().add(LoadRelayNamesEvent());
             return Scaffold(
               backgroundColor: Colors.grey[200],
               body: Center(child: CircularProgressIndicator.adaptive()),
             );
           }
 
-          if (state is HomeLoaded) {
-            context.read<HomeBloc>().add(LoadRelayStatusEvent());
+          if (state is RelayLoaded) {
+            context.read<RelayBloc>().add(LoadRelayStatusEvent());
             return Scaffold(
               backgroundColor: Colors.grey[200],
               appBar: PreferredSize(
@@ -65,49 +68,27 @@ class HomePage extends StatelessWidget {
                     flex: 20,
                     child: RefreshIndicator(
                       onRefresh:
-                          () async => context.read<HomeBloc>().add(
+                          () async => context.read<RelayBloc>().add(
                             LoadRelayStatusEvent(),
                           ),
                       child: ButtonWidgets(
-                        state: state,
+                        states: state,
                         length: state.relayStates.length,
                       ),
                     ),
                   ),
 
                   //sign name
-                  Expanded(flex: 2, child: Text("Created By: Ricky Rozian")),
+                  Expanded(
+                    flex: 2,
+                    child: RegularText("Created By: Ricky Rozian"),
+                  ),
                 ],
               ),
             );
           }
-
-          return Scaffold(
-            backgroundColor: Colors.grey[200],
-            body: SafeArea(
-              child: RefreshIndicator(
-                onRefresh:
-                    () async =>
-                        context.read<HomeBloc>().add(LoadRelayNamesEvent()),
-                child: ListView(
-                  children: [
-                    SizedBox(height: MediaQuery.of(context).size.height / 2.5),
-                    const Center(
-                      child: Text(
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
-                        ),
-
-                        'Terjadi kesalahan !!!\nSilahkan scroll kebawah unuk mencoba lagi !',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
+          //jika state tidak dikenali
+          return ErrorRelayWidget();
         },
       ),
     );
