@@ -6,7 +6,8 @@ import 'package:rhome/cores/helpers/app_bloc_observer.dart';
 import 'package:rhome/firebase_options.dart';
 
 void main() async {
-  Bloc.observer = AppBlocObserver();
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  Bloc.observer = AppBlocObserver();
   runApp(const MyApp());
 }
