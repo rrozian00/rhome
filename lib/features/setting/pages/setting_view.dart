@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rhome/cores/cores.dart';
+import 'package:rhome/features/setting/bloc/setting_bloc.dart';
 import 'package:rhome/features/setting/pages/profile_page.dart';
 
 class SettingView extends StatelessWidget {
@@ -15,21 +17,108 @@ class SettingView extends StatelessWidget {
         backgroundColor: Colors.grey[200],
         title: SubtitleText("Settings"),
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            ListTile(
-              leading: Icon(Icons.person),
-              title: RegularText("Profile"),
-              onTap: () => Navigator.pushNamed(context, ProfilePage.routeName),
+      body: BlocBuilder<SettingBloc, SettingState>(
+        builder: (context, state) {
+          if (state is SettingLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 10,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        leading: Icon(Icons.person),
+                        title: RegularText("Profile"),
+                        onTap:
+                            () => Navigator.pushNamed(
+                              context,
+                              ProfilePage.routeName,
+                            ),
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.near_me_rounded),
+                        title: RegularText("Customize IP"),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              final ipC = TextEditingController();
+                              return AlertDialog(
+                                content: Column(
+                                  spacing: 30,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "Ubah alamat IP",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    TextField(
+                                      controller: ipC,
+                                      decoration: InputDecoration(
+                                        hintText: "Masukkan alamat IP baru",
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        context.read<SettingBloc>().add(
+                                          SaveIpAddress(ipAddress: ipC.text),
+                                        );
+                                      },
+                                      child: Text("Simpan"),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.read<SettingBloc>().add(GetIpAddress());
+                        },
+                        child: Text("Get ip"),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: BlocBuilder<SettingBloc, SettingState>(
+                    builder: (context, state) {
+                      if (context.mounted) {
+                        if (state is SettingError) {
+                          return Text(state.message);
+                        }
+                      }
+                      final curentState = state as SettingLoaded;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              "Version : ${curentState.appVersion}",
+                              style: TextStyle(color: AppColors.textDisabled),
+                            ),
+                            Text(state.ipAdress),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-            ListTile(
-              leading: Icon(Icons.near_me_rounded),
-              title: RegularText("Customize IP"),
-              onTap: () {},
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

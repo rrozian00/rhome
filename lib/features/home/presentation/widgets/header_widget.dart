@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rhome/cores/cores.dart';
 import 'package:rhome/features/home/presentation/bloc/relay_state.dart';
+import 'package:rhome/features/setting/bloc/setting_bloc.dart';
 import 'package:rhome/features/setting/pages/setting_view.dart';
 
 class HeaderWidget extends StatelessWidget {
@@ -48,8 +50,10 @@ class HeaderWidget extends StatelessWidget {
                 icon: Icon(AppIcons.help, color: AppColors.black),
               ),
               IconButton(
-                onPressed:
-                    () => Navigator.pushNamed(context, SettingView.routeName),
+                onPressed: () {
+                  context.read<SettingBloc>().add(GetAppVersion());
+                  Navigator.pushNamed(context, SettingView.routeName);
+                },
                 icon: Icon(AppIcons.settings, color: AppColors.black),
               ),
             ],

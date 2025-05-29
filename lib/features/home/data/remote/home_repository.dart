@@ -1,11 +1,25 @@
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 import 'package:rhome/cores/error/failure.dart';
+import 'package:rhome/features/setting/repositories/setting_repo.dart';
 
 class HomeRepository {
-  final String esp32Ip = "192.168.0.110"; // ← IP ESP32 kamu
+  // static String esp32Ip = "192.168.0.110"; // ← IP ESP32 kamu
 
-  Future<Either<Failure, http.Response>> getResponseOn(int index) async {
+  Future<String?> getIp() async {
+    final settingRepo = SettingRepo();
+
+    final data = await settingRepo.getIpAddress();
+    if (data != null && data != "") {
+      return data;
+    }
+    return null;
+  }
+
+  Future<Either<Failure, http.Response>> getResponseOn(
+    int index,
+    String esp32Ip,
+  ) async {
     try {
       final result = await http.get(
         Uri.parse("http://$esp32Ip/on${index + 1}"),
@@ -20,7 +34,10 @@ class HomeRepository {
     }
   }
 
-  Future<Either<Failure, http.Response>> getResponseOff(int index) async {
+  Future<Either<Failure, http.Response>> getResponseOff(
+    int index,
+    String esp32Ip,
+  ) async {
     try {
       final result = await http.get(
         Uri.parse("http://$esp32Ip/off${index + 1}"),
@@ -35,7 +52,7 @@ class HomeRepository {
     }
   }
 
-  Future<Either<Failure, List<bool>>> getRelayStatus() async {
+  Future<Either<Failure, List<bool>>> getRelayStatus(String esp32Ip) async {
     try {
       final result = await http.get(Uri.parse("http://$esp32Ip/status"));
       if (result.statusCode == 200) {

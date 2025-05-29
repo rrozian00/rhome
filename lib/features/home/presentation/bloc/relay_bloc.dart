@@ -38,9 +38,8 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
   ) async {
     if (state is RelayLoaded) {
       try {
-        final response = await http.get(
-          Uri.parse("http://${_homeRepo.esp32Ip}"),
-        );
+        final esp32Ip = await _homeRepo.getIp();
+        final response = await http.get(Uri.parse("http://$esp32Ip"));
         final currentState = state as RelayLoaded;
         if (response.statusCode == 200 && !currentState.isConnected) {
           emit(currentState.copyWith(isConnected: true));
@@ -59,8 +58,11 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
     Emitter<RelayState> emit,
   ) async {
     if (state is RelayLoaded) {
+      final esp32Ip = await _homeRepo.getIp();
+      if (esp32Ip == null) return;
+
       final currentState = state as RelayLoaded;
-      final result = await _homeRepo.getRelayStatus();
+      final result = await _homeRepo.getRelayStatus(esp32Ip);
 
       result.fold(
         (failure) {
@@ -133,7 +135,9 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
     TurnOnRelayEvent event,
     Emitter<RelayState> emit,
   ) async {
-    final result = await _homeRepo.getResponseOn(event.index);
+    final esp32Ip = await _homeRepo.getIp();
+    if (esp32Ip == null) return;
+    final result = await _homeRepo.getResponseOn(event.index, esp32Ip);
     result.fold(
       (err) {
         emit(RelayError(message: err.message));
@@ -148,7 +152,9 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
     TurnOffRelayEvent event,
     Emitter<RelayState> emit,
   ) async {
-    final result = await _homeRepo.getResponseOff(event.index);
+    final esp32Ip = await _homeRepo.getIp();
+    if (esp32Ip == null) return;
+    final result = await _homeRepo.getResponseOff(event.index, esp32Ip);
     result.fold(
       (err) {
         emit(RelayError(message: err.message));
