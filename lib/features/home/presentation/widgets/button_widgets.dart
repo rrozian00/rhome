@@ -38,12 +38,9 @@ class ButtonWidgets extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
-            color:
-                // AppColors.red[200],
-                relay == true ? AppColors.green[200] : AppColors.red[200],
+            color: relay == true ? AppColors.green[200] : AppColors.red[200],
             child: InkWell(
               borderRadius: BorderRadius.circular(15),
-
               onDoubleTap: () {
                 showDialog(
                   context: context,
@@ -92,6 +89,8 @@ class ButtonWidgets extends StatelessWidget {
                   bloc.add(TurnOnRelayEvent(index));
                 }
               },
+
+              //Button
               child: AnimatedScale(
                 duration: Duration(milliseconds: 300),
                 scale: relay == true ? 1 : 0.95,
@@ -106,7 +105,12 @@ class ButtonWidgets extends StatelessWidget {
                           radius: MediaQuery.of(context).size.width / 7,
                           child:
                               states.imagePath[index] != ''
-                                  ? Image.file(File(states.imagePath[index]))
+                                  ? Image.file(
+                                    File(states.imagePath[index]),
+                                    fit: BoxFit.cover,
+                                    height: double.infinity,
+                                    width: double.infinity,
+                                  )
                                   : Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Image.asset(
@@ -124,9 +128,17 @@ class ButtonWidgets extends StatelessWidget {
                             RegularText(
                               states.relayNames[index],
                               style: TextStyle(
-                                color: AppColors.black,
-                                // fontSize: 16,
-                                // fontWeight: FontWeight.bold,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black,
+                                    blurRadius: 1.0,
+                                    offset: Offset(0.8, 0.8),
+                                  ),
+                                ],
+                                color:
+                                    relay == true
+                                        ? AppColors.green
+                                        : AppColors.red,
                               ),
                             ),
                             SubtitleText(

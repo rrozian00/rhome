@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:rhome/cores/app/app_version.dart';
+import 'package:rhome/features/home/data/remote/home_repository.dart';
 import 'package:rhome/features/setting/repositories/setting_repo.dart';
 
 part 'setting_event.dart';
@@ -8,6 +9,7 @@ part 'setting_state.dart';
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
   final settingRepo = SettingRepo();
+  final homeRepo = HomeRepository();
 
   SettingBloc() : super(SettingLoaded(appVersion: "", ipAdress: "")) {
     on<GetAppVersion>(_onGetAppVersion);
@@ -39,10 +41,10 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
   void _onGetIpAddress(GetIpAddress event, Emitter<SettingState> emit) async {
     emit(SettingLoading());
-    final data = await settingRepo.getIpAddress();
-    if (data == null || data == "") {
+    final data = await settingRepo.getIpAll();
+    print("ip di setting bloc: $data");
+    if (data == null && data == "") {
       emit(SettingError(message: "Data Kosong"));
-
       return;
     }
     final currentState = state;

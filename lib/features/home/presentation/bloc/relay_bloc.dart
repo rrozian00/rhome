@@ -8,10 +8,12 @@ import 'package:rhome/features/home/data/remote/home_repository.dart';
 
 import 'package:rhome/features/home/presentation/bloc/relay_event.dart';
 import 'package:rhome/features/home/presentation/bloc/relay_state.dart';
+import 'package:rhome/features/setting/repositories/setting_repo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RelayBloc extends Bloc<RelayEvent, RelayState> {
   final _homeRepo = HomeRepository();
+  final _settingRepo = SettingRepo();
   final _imageRepo = ImageRepository();
   late StreamSubscription _connectionStream;
 
@@ -38,7 +40,8 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
   ) async {
     if (state is RelayLoaded) {
       try {
-        final esp32Ip = await _homeRepo.getIp();
+        final esp32Ip = await _settingRepo.getIpAll();
+        print("ini ip di home bloc: $esp32Ip");
         final response = await http.get(Uri.parse("http://$esp32Ip"));
         final currentState = state as RelayLoaded;
         if (response.statusCode == 200 && !currentState.isConnected) {
@@ -58,7 +61,7 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
     Emitter<RelayState> emit,
   ) async {
     if (state is RelayLoaded) {
-      final esp32Ip = await _homeRepo.getIp();
+      final esp32Ip = await _settingRepo.getIpAll();
       if (esp32Ip == null) return;
 
       final currentState = state as RelayLoaded;
@@ -96,7 +99,7 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
     final pref = await SharedPreferences.getInstance();
     final savedNames = pref.getStringList('relayNames');
     final relayNames =
-        savedNames ?? List.generate(4, (index) => 'Ruang ${index + 1}');
+        savedNames ?? List.generate(4, (index) => 'Room ${index + 1}');
     final relayStates = List.filled(4, true);
     final imagePath = await _imageRepo.getImages();
 
@@ -135,7 +138,7 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
     TurnOnRelayEvent event,
     Emitter<RelayState> emit,
   ) async {
-    final esp32Ip = await _homeRepo.getIp();
+    final esp32Ip = await _settingRepo.getIpAll();
     if (esp32Ip == null) return;
     final result = await _homeRepo.getResponseOn(event.index, esp32Ip);
     result.fold(
@@ -152,7 +155,7 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
     TurnOffRelayEvent event,
     Emitter<RelayState> emit,
   ) async {
-    final esp32Ip = await _homeRepo.getIp();
+    final esp32Ip = await _settingRepo.getIpAll();
     if (esp32Ip == null) return;
     final result = await _homeRepo.getResponseOff(event.index, esp32Ip);
     result.fold(

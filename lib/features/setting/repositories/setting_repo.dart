@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rhome/features/setting/models/ip_model.dart';
+import 'package:rhome/features/auth/models/user_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingRepo {
   //TODO:masih hard id
+
+  //Remote
   final _firebase = FirebaseFirestore.instance;
 
   Future<String> getUserId() async {
@@ -12,35 +15,70 @@ class SettingRepo {
     return user.uid;
   }
 
-  Future<void> saveIpAddress(String ipAddress) async {
-    // final userId = await getUserId();
-    final userId = "123123";
-    if (userId == '') return;
+  //Belum terpakai
+  // Future<void> saveIpAddress(String ipAddress) async {
+  //   // final userId = await getUserId();
+  //   final userId = "123123";
+  //   if (userId == '') return;
 
-    final docRef = _firebase.collection("users/$userId/ipAddress").doc();
-    final data = IpModel(ipAddress: ipAddress);
-    await docRef.set(data.toMap());
-  }
+  //   final docRef = _firebase.collection("users/$userId").doc();
+  //   final data = UserModel();
+  //   final newData = data.copyWith(ipAddress: ipAddress);
+  //   await docRef.set(newData.toMap());
+  // }
 
   Future<void> updateIpAddress(String ipAddress) async {
     // final userId = await getUserId();
     final userId = "123123";
-    if (userId == '') return;
 
-    final docRef = _firebase
-        .collection("users/$userId/ipAddress")
-        .doc("123123");
-    final data = IpModel(ipAddress: ipAddress);
-    await docRef.update(data.toMap());
+    final docRef = _firebase.collection("users").doc(userId);
+    final data = UserModel();
+    final dataUpdate = data.copyWith(ipAddress: ipAddress);
+    await docRef.update(dataUpdate.toMap());
+    await saveIpToLocal(ipAddress);
   }
 
   Future<String?> getIpAddress() async {
-    final userId = "123123";
+    try {
+      final userId = "123123";
 
-    final ip = await _firebase.collection("users/$userId/ipAddress").get();
+      final ip = await _firebase.collection("users").doc(userId).get();
 
-    if (ip.docs.isEmpty) return null;
-    final ipResult = ip.docs.map((e) => IpModel.fromMap(e.data())).toList();
-    return ipResult.first.ipAddress;
+      if (ip.exists) {
+        final ipData = UserModel.fromMap(ip.data()!);
+        return ipData.ipAddress;
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    return null;
+  }
+
+  //Local Storage
+  Future<void> saveIpToLocal(String ipAddress) async {
+    final pref = await SharedPreferences.getInstance();
+    await pref.setString("ipAddress", ipAddress);
+  }
+
+  Future<String?> getIpFromLocal() async {
+    final pref = await SharedPreferences.getInstance();
+    return pref.getString("ipAddress");
+  }
+
+  Future<String?> getIpAll() async {
+    final settingRepo = SettingRepo();
+
+    final localIp = await settingRepo.getIpFromLocal();
+    if (localIp != null && localIp.isNotEmpty) {
+      print("local ip $localIp");
+      return localIp;
+    } else {
+      final firestoreIp = await settingRepo.getIpAddress();
+      if (localIp != null && localIp.isNotEmpty) {
+        print("fire ip $firestoreIp");
+        return firestoreIp;
+      }
+      return null;
+    }
   }
 }

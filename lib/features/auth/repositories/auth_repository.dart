@@ -40,7 +40,12 @@ class AuthRepository {
       if (userCredential == null || userCredential.user == null) return;
 
       final user = userCredential.user!;
-      final dataUser = UserModel.fromFirebaseUser(user);
+      final dataUser = UserModel(
+        uid: user.uid,
+        email: user.email,
+        name: user.displayName,
+        photoUrl: user.photoURL,
+      );
 
       final userDoc = _firestore.collection("users").doc(user.uid);
       final userSnapshot = await userDoc.get();

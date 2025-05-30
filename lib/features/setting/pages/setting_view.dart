@@ -24,10 +24,10 @@ class SettingView extends StatelessWidget {
           }
           return SafeArea(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: 10,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -47,7 +47,10 @@ class SettingView extends StatelessWidget {
                           showDialog(
                             context: context,
                             builder: (context) {
-                              final ipC = TextEditingController();
+                              final currentState = state as SettingLoaded;
+                              final ipC = TextEditingController(
+                                text: currentState.ipAdress,
+                              );
                               return AlertDialog(
                                 content: Column(
                                   spacing: 30,
@@ -66,10 +69,15 @@ class SettingView extends StatelessWidget {
                                         hintText: "Masukkan alamat IP baru",
                                       ),
                                     ),
+                                    Text("Ex : 192.168.0.110"),
                                     ElevatedButton(
                                       onPressed: () {
                                         context.read<SettingBloc>().add(
                                           SaveIpAddress(ipAddress: ipC.text),
+                                        );
+                                        Navigator.pop(context);
+                                        context.read<SettingBloc>().add(
+                                          GetAppVersion(),
                                         );
                                       },
                                       child: Text("Simpan"),
@@ -81,39 +89,31 @@ class SettingView extends StatelessWidget {
                           );
                         },
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.read<SettingBloc>().add(GetIpAddress());
-                        },
-                        child: Text("Get ip"),
-                      ),
                     ],
                   ),
                 ),
-                Expanded(
-                  flex: 1,
-                  child: BlocBuilder<SettingBloc, SettingState>(
-                    builder: (context, state) {
-                      if (context.mounted) {
-                        if (state is SettingError) {
-                          return Text(state.message);
-                        }
+                BlocBuilder<SettingBloc, SettingState>(
+                  builder: (context, state) {
+                    if (context.mounted) {
+                      if (state is SettingError) {
+                        return Text(state.message);
                       }
-                      final curentState = state as SettingLoaded;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                        child: Column(
-                          children: [
-                            Text(
-                              "Version : ${curentState.appVersion}",
-                              style: TextStyle(color: AppColors.textDisabled),
-                            ),
-                            Text(state.ipAdress),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                    }
+                    final curentState = state as SettingLoaded;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("IP Address : ${curentState.ipAdress}"),
+                          Text(
+                            "App Version : ${curentState.appVersion}",
+                            style: TextStyle(color: AppColors.textDisabled),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

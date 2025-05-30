@@ -1,20 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 import 'package:rhome/cores/error/failure.dart';
-import 'package:rhome/features/setting/repositories/setting_repo.dart';
 
 class HomeRepository {
   // static String esp32Ip = "192.168.0.110"; // ← IP ESP32 kamu
-
-  Future<String?> getIp() async {
-    final settingRepo = SettingRepo();
-
-    final data = await settingRepo.getIpAddress();
-    if (data != null && data != "") {
-      return data;
-    }
-    return null;
-  }
 
   Future<Either<Failure, http.Response>> getResponseOn(
     int index,

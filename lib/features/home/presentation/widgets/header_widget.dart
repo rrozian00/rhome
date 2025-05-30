@@ -47,11 +47,12 @@ class HeaderWidget extends StatelessWidget {
                 onPressed: () {
                   _showDialog(context);
                 },
-                icon: Icon(AppIcons.help, color: AppColors.black),
+                icon: Icon(Icons.help_outline_outlined, color: AppColors.black),
               ),
               IconButton(
                 onPressed: () {
                   context.read<SettingBloc>().add(GetAppVersion());
+                  context.read<SettingBloc>().add(GetIpAddress());
                   Navigator.pushNamed(context, SettingView.routeName);
                 },
                 icon: Icon(AppIcons.settings, color: AppColors.black),
@@ -69,7 +70,7 @@ void _showDialog(BuildContext context) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: SubtitleText("Instruksi"),
+        title: SubtitleText("Instruction"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           spacing: 16,
@@ -102,7 +103,7 @@ void _showDialog(BuildContext context) {
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: RegularText(
-                "Kembali",
+                "Oke",
                 style: TextStyle(color: AppColors.green),
               ),
             ),
