@@ -41,7 +41,6 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
     if (state is RelayLoaded) {
       try {
         final esp32Ip = await _settingRepo.getIpAll();
-        print("ini ip di home bloc: $esp32Ip");
         final response = await http.get(Uri.parse("http://$esp32Ip"));
         final currentState = state as RelayLoaded;
         if (response.statusCode == 200 && !currentState.isConnected) {

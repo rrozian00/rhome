@@ -52,7 +52,6 @@ class HeaderWidget extends StatelessWidget {
               IconButton(
                 onPressed: () {
                   context.read<SettingBloc>().add(GetAppVersion());
-                  context.read<SettingBloc>().add(GetIpAddress());
                   Navigator.pushNamed(context, SettingView.routeName);
                 },
                 icon: Icon(AppIcons.settings, color: AppColors.black),

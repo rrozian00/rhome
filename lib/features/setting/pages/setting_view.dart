@@ -110,6 +110,15 @@ class SettingView extends StatelessWidget {
                             "App Version : ${curentState.appVersion}",
                             style: TextStyle(color: AppColors.textDisabled),
                           ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "By : Ricky Rozian",
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     );

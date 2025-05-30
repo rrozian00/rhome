@@ -66,19 +66,10 @@ class SettingRepo {
   }
 
   Future<String?> getIpAll() async {
-    final settingRepo = SettingRepo();
+    final local = await getIpFromLocal();
+    if (local != null && local.isNotEmpty) return local;
 
-    final localIp = await settingRepo.getIpFromLocal();
-    if (localIp != null && localIp.isNotEmpty) {
-      print("local ip $localIp");
-      return localIp;
-    } else {
-      final firestoreIp = await settingRepo.getIpAddress();
-      if (localIp != null && localIp.isNotEmpty) {
-        print("fire ip $firestoreIp");
-        return firestoreIp;
-      }
-      return null;
-    }
+    final remote = await getIpAddress();
+    return (remote != null && remote.isNotEmpty) ? remote : null;
   }
 }

@@ -26,7 +26,6 @@ class ErrorRelayWidget extends StatelessWidget {
           IconButton(
             onPressed: () {
               context.read<SettingBloc>().add(GetAppVersion());
-              context.read<SettingBloc>().add(GetIpAddress());
               Navigator.pushNamed(context, SettingView.routeName);
             },
             icon: Icon(AppIcons.settings, color: Colors.black),
@@ -48,9 +47,8 @@ class ErrorRelayWidget extends StatelessWidget {
                   child: Column(
                     children: [
                       HeadingText("Terjadi kesalahan !!!"),
+                      RegularText("Pastikan IP Address perangkat sesuai."),
                       RegularText(
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: AppColors.black),
                         'Silahkan scroll kebawah unuk mencoba lagi !',
                       ),
                     ],

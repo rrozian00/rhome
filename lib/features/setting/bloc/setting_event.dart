@@ -16,5 +16,3 @@ final class SaveIpAddress extends SettingEvent {
   @override
   List<Object> get props => [ipAddress];
 }
-
-final class GetIpAddress extends SettingEvent {}

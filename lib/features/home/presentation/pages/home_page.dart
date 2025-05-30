@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rhome/cores/components/text/regular_text.dart';
 import 'package:rhome/features/home/presentation/pages/splash.dart';
 import 'package:rhome/features/home/presentation/widgets/button_widgets.dart';
 import 'package:rhome/features/home/presentation/widgets/error_relay_widget.dart';
@@ -76,12 +75,6 @@ class HomePage extends StatelessWidget {
                         length: state.relayStates.length,
                       ),
                     ),
-                  ),
-
-                  //sign name
-                  Expanded(
-                    flex: 2,
-                    child: RegularText("Created By: Ricky Rozian"),
                   ),
                 ],
               ),

@@ -13,7 +13,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
   SettingBloc() : super(SettingLoaded(appVersion: "", ipAdress: "")) {
     on<GetAppVersion>(_onGetAppVersion);
-    on<GetIpAddress>(_onGetIpAddress);
     on<SaveIpAddress>(_onSaveIpAddress);
   }
 
@@ -21,9 +20,9 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     emit(SettingLoading());
     try {
       final version = await getAppVersion();
-      final data = await settingRepo.getIpAddress();
-      if (data != null && data != "") {
-        emit(SettingLoaded(appVersion: version, ipAdress: data));
+      final ip = await settingRepo.getIpAll();
+      if (ip != null && ip != "") {
+        emit(SettingLoaded(appVersion: version, ipAdress: ip));
       }
     } catch (e) {
       emit(SettingError(message: e.toString()));
@@ -36,20 +35,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     final currentState = state;
     if (currentState is SettingLoaded) {
       emit(currentState.copyWith(ipAddress: event.ipAddress));
-    }
-  }
-
-  void _onGetIpAddress(GetIpAddress event, Emitter<SettingState> emit) async {
-    emit(SettingLoading());
-    final data = await settingRepo.getIpAll();
-    print("ip di setting bloc: $data");
-    if (data == null && data == "") {
-      emit(SettingError(message: "Data Kosong"));
-      return;
-    }
-    final currentState = state;
-    if (currentState is SettingLoaded) {
-      emit(currentState.copyWith(ipAddress: data));
     }
   }
 }
