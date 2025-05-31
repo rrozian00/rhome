@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rhome/cores/app/routes.dart';
 import 'package:rhome/cores/preferences/colors.dart';
 import 'package:rhome/cores/preferences/themes/light_theme.dart';
+import 'package:rhome/features/auth/login/page/login_view.dart';
 import 'package:rhome/features/home/presentation/bloc/relay_bloc.dart';
 import 'package:rhome/features/setting/bloc/setting_bloc.dart';
 
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         onGenerateRoute: routes,
+        initialRoute: LoginView.routeName,
         title: 'RHome',
         theme: LightTheme(AppColors.black).theme,
       ),

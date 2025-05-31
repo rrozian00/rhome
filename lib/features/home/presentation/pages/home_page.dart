@@ -12,7 +12,7 @@ import '../bloc/relay_state.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  static const routeName = '/';
+  static const routeName = '/home';
 
   @override
   Widget build(BuildContext context) {
