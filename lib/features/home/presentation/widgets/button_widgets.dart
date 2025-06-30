@@ -8,16 +8,10 @@ import 'package:rhome/features/home/presentation/bloc/relay_event.dart';
 import 'package:rhome/features/home/presentation/bloc/relay_state.dart';
 
 class ButtonWidgets extends StatelessWidget {
-  const ButtonWidgets({
-    super.key,
-    required this.length,
-    required this.states,
-    // required this.icons,
-  });
+  const ButtonWidgets({super.key, required this.length, required this.states});
 
   final int length;
   final RelayLoaded states;
-  // final List<String> icons;
   @override
   Widget build(BuildContext context) {
     return Padding(
