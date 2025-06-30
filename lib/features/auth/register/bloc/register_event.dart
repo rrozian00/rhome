@@ -6,3 +6,18 @@ sealed class RegisterEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+final class DoRegister extends RegisterEvent {
+  final String email;
+  final String password;
+  final String name;
+
+  const DoRegister({
+    required this.email,
+    required this.password,
+    required this.name,
+  });
+
+  @override
+  List<Object> get props => [email, password, name];
+}

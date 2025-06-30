@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rhome/features/home/presentation/pages/splash.dart';
+import 'package:rhome/features/home/presentation/views/splash.dart';
 import 'package:rhome/features/home/presentation/widgets/button_widgets.dart';
 import 'package:rhome/features/home/presentation/widgets/error_relay_widget.dart';
 import 'package:rhome/features/home/presentation/widgets/header_widget.dart';
@@ -9,8 +9,8 @@ import '../bloc/relay_bloc.dart';
 import '../bloc/relay_event.dart';
 import '../bloc/relay_state.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomeView extends StatelessWidget {
+  const HomeView({super.key});
 
   static const routeName = '/home';
 

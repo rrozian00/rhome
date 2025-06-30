@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rhome/cores/cores.dart';
 import 'package:rhome/features/home/presentation/bloc/relay_state.dart';
 import 'package:rhome/features/setting/bloc/setting_bloc.dart';
-import 'package:rhome/features/setting/pages/setting_view.dart';
+import 'package:rhome/features/setting/views/setting_view.dart';
 
 class HeaderWidget extends StatelessWidget {
   const HeaderWidget({super.key, required this.state});

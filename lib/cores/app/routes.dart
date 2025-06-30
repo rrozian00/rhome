@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:rhome/features/auth/login/page/login_view.dart';
-import 'package:rhome/features/home/presentation/pages/home_page.dart';
-import 'package:rhome/features/setting/pages/setting_view.dart';
+import 'package:rhome/features/auth/register/view/register_view.dart';
+import 'package:rhome/features/home/presentation/views/home_view.dart';
+import 'package:rhome/features/setting/views/setting_view.dart';
 
-Route<dynamic> routes(settings) {
-  switch (settings.name) {
-    case LoginView.routeName:
-      return MaterialPageRoute(builder: (context) => const LoginView());
-    case HomePage.routeName:
-      return MaterialPageRoute(builder: (context) => const HomePage());
-    case SettingView.routeName:
-      return MaterialPageRoute(builder: (context) => const SettingView());
+final Map<String, WidgetBuilder> appRoutes = {
+  LoginView.routeName: (context) => const LoginView(),
+  HomeView.routeName: (context) => const HomeView(),
+  SettingView.routeName: (context) => const SettingView(),
+  RegisterView.routeName: (context) => const RegisterView(),
+};
 
-    default:
-      return MaterialPageRoute(
-        builder: (context) {
-          return Scaffold(
-            appBar: AppBar(title: Text("Page Not Found")),
-            body: Center(
-              child: Text("Page Not Found", textAlign: TextAlign.center),
-            ),
-          );
-        },
-      );
+Route<dynamic> routes(RouteSettings settings) {
+  final builder = appRoutes[settings.name];
+  if (builder != null) {
+    return MaterialPageRoute(builder: builder, settings: settings);
   }
+
+  // Fallback jika route tidak ditemukan
+  return MaterialPageRoute(
+    builder:
+        (context) => Scaffold(
+          appBar: AppBar(title: const Text("Page Not Found")),
+          body: const Center(child: Text("Page Not Found")),
+        ),
+  );
 }

@@ -1,13 +1,16 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rhome/cores/error/failure.dart';
 import 'package:rhome/features/auth/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SettingRepo {
-  //TODO:masih hard id
-
+class SettingRepository {
   //Remote
   final _firebase = FirebaseFirestore.instance;
+  // final userId = '';
 
   Future<String> getUserId() async {
     final user = FirebaseAuth.instance.currentUser;
@@ -15,21 +18,22 @@ class SettingRepo {
     return user.uid;
   }
 
-  //Belum terpakai
-  // Future<void> saveIpAddress(String ipAddress) async {
-  //   // final userId = await getUserId();
-  //   final userId = "123123";
-  //   if (userId == '') return;
-
-  //   final docRef = _firebase.collection("users/$userId").doc();
-  //   final data = UserModel();
-  //   final newData = data.copyWith(ipAddress: ipAddress);
-  //   await docRef.set(newData.toMap());
-  // }
+  Future<Either<Failure, UserModel>> getProfile() async {
+    String userId = await getUserId();
+    try {
+      final userData = await _firebase
+          .collection('users')
+          .doc(userId)
+          .get()
+          .then((value) => UserModel.fromMap(value.data()!));
+      return Right(userData);
+    } catch (e) {
+      return Left(Failure('$e'));
+    }
+  }
 
   Future<void> updateIpAddress(String ipAddress) async {
-    // final userId = await getUserId();
-    final userId = "123123";
+    final userId = await getUserId();
 
     final docRef = _firebase.collection("users").doc(userId);
     final data = UserModel();
@@ -40,16 +44,14 @@ class SettingRepo {
 
   Future<String?> getIpAddress() async {
     try {
-      final userId = "123123";
-
+      final userId = await getUserId();
       final ip = await _firebase.collection("users").doc(userId).get();
-
       if (ip.exists) {
         final ipData = UserModel.fromMap(ip.data()!);
         return ipData.ipAddress;
       }
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
     }
     return null;
   }

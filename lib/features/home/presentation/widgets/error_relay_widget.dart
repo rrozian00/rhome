@@ -6,7 +6,7 @@ import 'package:rhome/cores/preferences/preferences.dart';
 import 'package:rhome/features/home/presentation/bloc/relay_bloc.dart';
 import 'package:rhome/features/home/presentation/bloc/relay_event.dart';
 import 'package:rhome/features/setting/bloc/setting_bloc.dart';
-import 'package:rhome/features/setting/pages/setting_view.dart';
+import 'package:rhome/features/setting/views/setting_view.dart';
 
 class ErrorRelayWidget extends StatelessWidget {
   const ErrorRelayWidget({super.key});
@@ -42,11 +42,11 @@ class ErrorRelayWidget extends StatelessWidget {
             child: ListView(
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height / 3),
-                Icon(AppIcons.help, size: 80, color: AppColors.red),
+                Icon(Icons.help, size: 80, color: AppColors.red),
                 const Center(
                   child: Column(
                     children: [
-                      HeadingText("Terjadi kesalahan !!!"),
+                      HeadingText("Terjadi kesalahan saat menghubungkan !"),
                       RegularText("Pastikan IP Address perangkat sesuai."),
                       RegularText(
                         'Silahkan scroll kebawah unuk mencoba lagi !',

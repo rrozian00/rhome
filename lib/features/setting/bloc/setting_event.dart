@@ -9,10 +9,12 @@ sealed class SettingEvent extends Equatable {
 
 final class GetAppVersion extends SettingEvent {}
 
-final class SaveIpAddress extends SettingEvent {
+final class UpdateIpAddress extends SettingEvent {
   final String ipAddress;
 
-  const SaveIpAddress({required this.ipAddress});
+  const UpdateIpAddress({required this.ipAddress});
   @override
   List<Object> get props => [ipAddress];
 }
+
+final class DoLogout extends SettingEvent {}

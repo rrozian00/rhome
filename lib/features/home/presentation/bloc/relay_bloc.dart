@@ -8,16 +8,20 @@ import 'package:rhome/features/home/data/remote/home_repository.dart';
 
 import 'package:rhome/features/home/presentation/bloc/relay_event.dart';
 import 'package:rhome/features/home/presentation/bloc/relay_state.dart';
-import 'package:rhome/features/setting/repositories/setting_repo.dart';
+import 'package:rhome/features/setting/repositories/setting_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RelayBloc extends Bloc<RelayEvent, RelayState> {
-  final _homeRepo = HomeRepository();
-  final _settingRepo = SettingRepo();
-  final _imageRepo = ImageRepository();
+  final HomeRepository homeRepo;
+  final SettingRepository settingRepo;
+  final ImageRepository imageRepo;
   late StreamSubscription _connectionStream;
 
-  RelayBloc() : super(RelayInitial()) {
+  RelayBloc({
+    required this.homeRepo,
+    required this.settingRepo,
+    required this.imageRepo,
+  }) : super(RelayInitial()) {
     on<PickImageEvent>(_onPickImage);
     on<ResetImage>(_onResetImage);
     on<LoadRelayNamesEvent>(_onLoadRelayNames);
@@ -40,7 +44,7 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
   ) async {
     if (state is RelayLoaded) {
       try {
-        final esp32Ip = await _settingRepo.getIpAll();
+        final esp32Ip = await settingRepo.getIpAll();
         final response = await http.get(Uri.parse("http://$esp32Ip"));
         final currentState = state as RelayLoaded;
         if (response.statusCode == 200 && !currentState.isConnected) {
@@ -60,11 +64,11 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
     Emitter<RelayState> emit,
   ) async {
     if (state is RelayLoaded) {
-      final esp32Ip = await _settingRepo.getIpAll();
+      final esp32Ip = await settingRepo.getIpAll();
       if (esp32Ip == null) return;
 
       final currentState = state as RelayLoaded;
-      final result = await _homeRepo.getRelayStatus(esp32Ip);
+      final result = await homeRepo.getRelayStatus(esp32Ip);
 
       result.fold(
         (failure) {
@@ -100,7 +104,7 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
     final relayNames =
         savedNames ?? List.generate(4, (index) => 'Room ${index + 1}');
     final relayStates = List.filled(4, true);
-    final imagePath = await _imageRepo.getImages();
+    final imagePath = await imageRepo.getImages();
 
     emit(
       RelayLoaded(
@@ -137,9 +141,9 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
     TurnOnRelayEvent event,
     Emitter<RelayState> emit,
   ) async {
-    final esp32Ip = await _settingRepo.getIpAll();
+    final esp32Ip = await settingRepo.getIpAll();
     if (esp32Ip == null) return;
-    final result = await _homeRepo.getResponseOn(event.index, esp32Ip);
+    final result = await homeRepo.getResponseOn(event.index, esp32Ip);
     result.fold(
       (err) {
         emit(RelayError(message: err.message));
@@ -154,9 +158,9 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
     TurnOffRelayEvent event,
     Emitter<RelayState> emit,
   ) async {
-    final esp32Ip = await _settingRepo.getIpAll();
+    final esp32Ip = await settingRepo.getIpAll();
     if (esp32Ip == null) return;
-    final result = await _homeRepo.getResponseOff(event.index, esp32Ip);
+    final result = await homeRepo.getResponseOff(event.index, esp32Ip);
     result.fold(
       (err) {
         emit(RelayError(message: err.message));
@@ -172,7 +176,7 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
     Emitter<RelayState> emit,
   ) async {
     emit(RelayLoading());
-    final result = await _imageRepo.setImage(event.index);
+    final result = await imageRepo.setImage(event.index);
     result.fold(
       (err) {
         emit(RelayError(message: err.message));
@@ -191,7 +195,7 @@ class RelayBloc extends Bloc<RelayEvent, RelayState> {
 
   Future<void> _onResetImage(ResetImage event, Emitter<RelayState> emit) async {
     emit(RelayLoading());
-    final result = await _imageRepo.resetImage(event.index);
+    final result = await imageRepo.resetImage(event.index);
     result.fold(
       (err) {
         emit(RelayError(message: err.message));

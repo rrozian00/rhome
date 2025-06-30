@@ -16,3 +16,7 @@ final class DoLogin extends LoginEvent {
   @override
   List<Object> get props => [email, password];
 }
+
+final class CheckAuth extends LoginEvent {}
+
+// final class DoLogout extends LoginEvent {}
