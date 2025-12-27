@@ -40,8 +40,10 @@ class _LoginViewState extends State<LoginView> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 25,
               children: [
+                Text("Email"),
                 TextField(
                   controller: email,
                   decoration: InputDecoration(
@@ -49,6 +51,7 @@ class _LoginViewState extends State<LoginView> {
                     hintText: "Email",
                   ),
                 ),
+                Text("Password"),
                 TextField(
                   obscureText: _obsecureStatus,
                   controller: password,
@@ -94,13 +97,19 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
         ),
-        floatingActionButton: TextButton(
-          onPressed:
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => RegisterView()),
-              ),
-          child: Text('Register'),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text("Don't have an acount? "),
+            TextButton(
+              onPressed:
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterView()),
+                  ),
+              child: Text('Register'),
+            ),
+          ],
         ),
       ),
     );

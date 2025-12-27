@@ -15,15 +15,18 @@ class ButtonWidgets extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final isTablet = size.shortestSide >= 600;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: GridView.builder(
         itemCount: length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+          crossAxisCount: isTablet ? 4 : 2,
           crossAxisSpacing: 20,
           mainAxisSpacing: 20,
-          childAspectRatio: 0.75,
+          childAspectRatio: isTablet ? 0.5 : 0.75,
         ),
         itemBuilder: (context, index) {
           final bloc = context.read<RelayBloc>();

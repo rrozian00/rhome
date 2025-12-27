@@ -47,8 +47,11 @@ class _RegisterViewState extends State<RegisterView> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 25,
               children: [
+                Text("Nama"),
+
                 TextField(
                   controller: name,
                   decoration: InputDecoration(
@@ -56,6 +59,8 @@ class _RegisterViewState extends State<RegisterView> {
                     hintText: "Nama",
                   ),
                 ),
+                Text("Email"),
+
                 TextField(
                   controller: email,
                   decoration: InputDecoration(
@@ -63,6 +68,8 @@ class _RegisterViewState extends State<RegisterView> {
                     hintText: "Email",
                   ),
                 ),
+                Text("Password"),
+
                 TextField(
                   obscureText: _obsecureStatus,
                   controller: pass,
@@ -83,6 +90,8 @@ class _RegisterViewState extends State<RegisterView> {
                     ),
                   ),
                 ),
+                Text("Ulangi Password"),
+
                 TextField(
                   obscureText: _obsecureStatus2,
                   controller: pass2,
@@ -128,11 +137,18 @@ class _RegisterViewState extends State<RegisterView> {
             ),
           ),
         ),
-        floatingActionButton: TextButton(
-          onPressed: () {
-            Navigator.of(context).maybePop(LoginView.routeName);
-          },
-          child: Text('Login'),
+
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text("Already have an acount? "),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).maybePop(LoginView.routeName);
+              },
+              child: Text('Login'),
+            ),
+          ],
         ),
       ),
     );

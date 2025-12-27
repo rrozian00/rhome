@@ -46,7 +46,12 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset("assets/icons/home.png", height: 90, width: 90),
+              Image.asset(
+                "assets/icons/home.png",
+                color: Colors.black,
+                height: 90,
+                width: 90,
+              ),
               Text(
                 "RHome",
                 style: TextStyle(
