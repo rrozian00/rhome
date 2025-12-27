@@ -13,7 +13,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc({required this.authRepo}) : super(LoginInitial()) {
     on<DoLogin>(_onDoLogin);
     on<CheckAuth>(_onCheckAuth);
-    // on<DoLogout>(_onDoLogout);
   }
 
   Future<void> _onDoLogin(DoLogin event, Emitter<LoginState> emit) async {
@@ -32,16 +31,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Future<void> _onCheckAuth(CheckAuth event, Emitter<LoginState> emit) async {
     final user = authRepo.getCurrentUser();
     if (user != null) {
-      emit(UserLogged());
+      await Future.delayed(Duration(milliseconds: 700));
+      emit(LoginSuccess());
     } else {
-      emit(UserLogout());
+      await Future.delayed(Duration(milliseconds: 700));
+      emit(LoginFailed(message: 'Silahkan Login'));
     }
   }
-
-  // Future<void> _onDoLogout(DoLogout event, Emitter<LoginState> emit) async {
-  //   emit(LoginLoading());
-  //   await Future.delayed(Duration(seconds: 1));
-  //   await authRepo.logout();
-  //   emit(UserLogout());
-  // }
 }

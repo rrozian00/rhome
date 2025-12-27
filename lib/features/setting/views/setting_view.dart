@@ -18,7 +18,11 @@ class SettingView extends StatelessWidget {
       listener: (context, state) {
         final cs = state as SettingLoaded;
         if (cs.isLogout == true) {
-          Navigator.pushReplacementNamed(context, LoginView.routeName);
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            LoginView.routeName,
+            (route) => false,
+          );
         }
       },
       child: Scaffold(
@@ -33,7 +37,7 @@ class SettingView extends StatelessWidget {
               return Center(child: Text("Error : ${state.message}"));
             }
             if (state is SettingLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator.adaptive());
             }
             return SafeArea(
               child: Padding(

@@ -12,6 +12,7 @@ class ButtonWidgets extends StatelessWidget {
 
   final int length;
   final RelayLoaded states;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -22,7 +23,7 @@ class ButtonWidgets extends StatelessWidget {
           crossAxisCount: 2,
           crossAxisSpacing: 20,
           mainAxisSpacing: 20,
-          childAspectRatio: 0.85,
+          childAspectRatio: 0.75,
         ),
         itemBuilder: (context, index) {
           final bloc = context.read<RelayBloc>();
@@ -35,47 +36,12 @@ class ButtonWidgets extends StatelessWidget {
             color: relay == true ? AppColors.green[200] : AppColors.red[200],
             child: InkWell(
               borderRadius: BorderRadius.circular(15),
-              onDoubleTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: SubtitleText("Ubah Gambar"),
-                      content: Column(
-                        spacing: 20,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              context.read<RelayBloc>().add(
-                                PickImageEvent(index: index),
-                              );
-                              Navigator.pop(context);
-                            },
-                            child: RegularText(
-                              "Ubah",
-                              style: TextStyle(color: AppColors.white),
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              context.read<RelayBloc>().add(ResetImage(index));
-                              Navigator.pop(context);
-                            },
-                            child: RegularText(
-                              "Reset",
-                              style: TextStyle(color: AppColors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-              onLongPress: () {
-                _showRenameDialog(context, index, states.relayNames[index]);
-              },
+              // onDoubleTap: () {
+
+              // },
+              // onLongPress: () {
+              //   _showRenameDialog(context, index, states.relayNames[index]);
+              // },
               onTap: () {
                 if (relay) {
                   bloc.add(TurnOffRelayEvent(index));
@@ -93,6 +59,38 @@ class ButtonWidgets extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.white,
+                              foregroundColor: AppColors.blue,
+                              child: IconButton(
+                                onPressed: () {
+                                  _showRenameDialog(
+                                    context,
+                                    index,
+                                    states.relayNames[index],
+                                  );
+                                },
+                                icon: Icon(Icons.edit),
+                              ),
+                            ),
+                            CircleAvatar(
+                              backgroundColor: Colors.white,
+                              foregroundColor: AppColors.black,
+                              child: IconButton(
+                                onPressed: () {
+                                  _showOptionDialog(context, index);
+                                },
+                                icon: Icon(Icons.image),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       ClipOval(
                         child: CircleAvatar(
                           backgroundColor: Colors.grey[300],
@@ -141,7 +139,7 @@ class ButtonWidgets extends StatelessWidget {
                                 color:
                                     relay == true
                                         ? AppColors.red
-                                        : AppColors.black[200],
+                                        : AppColors.white,
                               ),
                             ),
                           ],
@@ -169,12 +167,12 @@ void _showRenameDialog(BuildContext context, int index, String currentName) {
     builder: (context) {
       return AlertDialog(
         scrollable: false,
-        title: const SubtitleText('Ganti Nama'),
+        title: const SubtitleText('Rename'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             RegularTextInput(
-              hintText: "Nama Relay Baru",
+              hintText: "Input new name",
               controller: controller,
               textCapitalization: TextCapitalization.words,
             ),
@@ -183,7 +181,7 @@ void _showRenameDialog(BuildContext context, int index, String currentName) {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Batal'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
@@ -193,11 +191,48 @@ void _showRenameDialog(BuildContext context, int index, String currentName) {
               Navigator.pop(context);
             },
             child: const Text(
-              'Simpan',
+              'Save',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         ],
+      );
+    },
+  );
+}
+
+void _showOptionDialog(BuildContext context, int index) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: SubtitleText("Options"),
+        content: Column(
+          spacing: 20,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                context.read<RelayBloc>().add(PickImageEvent(index: index));
+                Navigator.pop(context);
+              },
+              child: RegularText(
+                "Change Picture",
+                style: TextStyle(color: AppColors.white),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                context.read<RelayBloc>().add(ResetImage(index));
+                Navigator.pop(context);
+              },
+              child: RegularText(
+                "Reset Picture",
+                style: TextStyle(color: AppColors.white),
+              ),
+            ),
+          ],
+        ),
       );
     },
   );

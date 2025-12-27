@@ -3,12 +3,14 @@ import 'package:rhome/features/auth/login/page/login_view.dart';
 import 'package:rhome/features/auth/register/view/register_view.dart';
 import 'package:rhome/features/home/presentation/views/home_view.dart';
 import 'package:rhome/features/setting/views/setting_view.dart';
+import 'package:rhome/features/splash/splash_screen.dart';
 
 final Map<String, WidgetBuilder> appRoutes = {
   LoginView.routeName: (context) => const LoginView(),
   HomeView.routeName: (context) => const HomeView(),
   SettingView.routeName: (context) => const SettingView(),
   RegisterView.routeName: (context) => const RegisterView(),
+  SplashScreen.routeName: (context) => const SplashScreen(),
 };
 
 Route<dynamic> routes(RouteSettings settings) {

@@ -18,5 +18,3 @@ final class DoLogin extends LoginEvent {
 }
 
 final class CheckAuth extends LoginEvent {}
-
-// final class DoLogout extends LoginEvent {}

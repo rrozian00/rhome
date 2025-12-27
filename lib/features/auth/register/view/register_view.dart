@@ -16,6 +16,9 @@ class _RegisterViewState extends State<RegisterView> {
   final email = TextEditingController();
   final name = TextEditingController();
   final pass = TextEditingController();
+  final pass2 = TextEditingController();
+  bool _obsecureStatus = true;
+  bool _obsecureStatus2 = true;
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +64,43 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                 ),
                 TextField(
+                  obscureText: _obsecureStatus,
                   controller: pass,
                   decoration: InputDecoration(
                     fillColor: Colors.white,
                     hintText: "Password",
+                    suffix: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _obsecureStatus = !_obsecureStatus;
+                        });
+                      },
+                      icon: Icon(
+                        _obsecureStatus
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                    ),
+                  ),
+                ),
+                TextField(
+                  obscureText: _obsecureStatus2,
+                  controller: pass2,
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    hintText: "Ulangi Password",
+                    suffix: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _obsecureStatus2 = !_obsecureStatus2;
+                        });
+                      },
+                      icon: Icon(
+                        _obsecureStatus2
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                    ),
                   ),
                 ),
                 Center(

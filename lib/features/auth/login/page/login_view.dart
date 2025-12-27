@@ -16,17 +16,12 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   final email = TextEditingController(text: 'rrozian00@gmail.com');
   final password = TextEditingController(text: '123123');
+  bool _obsecureStatus = true;
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
-        if (state is UserLogged) {
-          Navigator.pushReplacementNamed(context, HomeView.routeName);
-        }
-        if (state is UserLogout) {
-          Navigator.pushReplacementNamed(context, LoginView.routeName);
-        }
         if (state is LoginSuccess) {
           Navigator.of(context).pushReplacementNamed(HomeView.routeName);
         }
@@ -55,13 +50,26 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
                 TextField(
-                  obscureText: true,
+                  obscureText: _obsecureStatus,
                   controller: password,
                   decoration: InputDecoration(
+                    suffix: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _obsecureStatus = !_obsecureStatus;
+                        });
+                      },
+                      icon: Icon(
+                        _obsecureStatus
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                    ),
                     fillColor: Colors.white,
                     hintText: "Password",
                   ),
                 ),
+
                 Center(
                   child: BlocBuilder<LoginBloc, LoginState>(
                     builder: (context, state) {

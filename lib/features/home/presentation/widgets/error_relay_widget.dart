@@ -41,16 +41,16 @@ class ErrorRelayWidget extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: ListView(
               children: [
-                SizedBox(height: MediaQuery.of(context).size.height / 3),
-                Icon(Icons.help, size: 80, color: AppColors.red),
+                SizedBox(height: MediaQuery.of(context).size.height / 3.5),
+                Icon(Icons.warning_rounded, size: 80, color: AppColors.red),
                 const Center(
                   child: Column(
                     children: [
-                      HeadingText("Terjadi kesalahan saat menghubungkan !"),
-                      RegularText("Pastikan IP Address perangkat sesuai."),
-                      RegularText(
-                        'Silahkan scroll kebawah unuk mencoba lagi !',
+                      SubtitleText(
+                        "\nTerjadi kesalahan saat menghubungkan !\n",
                       ),
+                      RegularText("Pastikan IP Address perangkat sesuai."),
+                      RegularText('Silahkan scroll untuk refresh halaman.'),
                     ],
                   ),
                 ),

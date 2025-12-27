@@ -21,7 +21,3 @@ final class LoginFailed extends LoginState {
   @override
   List<Object> get props => [message];
 }
-
-final class UserLogged extends LoginState {}
-
-final class UserLogout extends LoginState {}

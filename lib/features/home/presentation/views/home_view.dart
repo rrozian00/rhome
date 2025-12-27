@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rhome/features/home/presentation/views/splash.dart';
-import 'package:rhome/features/home/presentation/widgets/button_widgets.dart';
-import 'package:rhome/features/home/presentation/widgets/error_relay_widget.dart';
-import 'package:rhome/features/home/presentation/widgets/header_widget.dart';
 
 import '../bloc/relay_bloc.dart';
 import '../bloc/relay_event.dart';
 import '../bloc/relay_state.dart';
+import '../widgets/button_widgets.dart';
+import '../widgets/error_relay_widget.dart';
+import '../widgets/header_widget.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -27,23 +26,44 @@ class HomeView extends StatelessWidget {
       child: BlocBuilder<RelayBloc, RelayState>(
         builder: (context, state) {
           if (state is RelayInitial) {
-            // Load data pertama kali
             context.read<RelayBloc>().add(LoadRelayNamesEvent());
-            return Splash();
           }
+
           if (state is RelayLoading) {
             return Scaffold(
               backgroundColor: Colors.grey[200],
-
               body: Center(child: CircularProgressIndicator.adaptive()),
             );
           }
+
           if (state is RelayError &&
               state.message.trim() == "Image is not picked") {
             context.read<RelayBloc>().add(LoadRelayNamesEvent());
             return Scaffold(
               backgroundColor: Colors.grey[200],
               body: Center(child: CircularProgressIndicator.adaptive()),
+            );
+          }
+
+          if (state is RelayError) {
+            return Scaffold(
+              backgroundColor: Colors.grey[200],
+
+              body: Column(
+                children: [
+                  // Daftar relay
+                  Expanded(
+                    flex: 20,
+                    child: RefreshIndicator(
+                      onRefresh:
+                          () async => context.read<RelayBloc>().add(
+                            LoadRelayStatusEvent(),
+                          ),
+                      child: ErrorRelayWidget(),
+                    ),
+                  ),
+                ],
+              ),
             );
           }
 
@@ -80,8 +100,7 @@ class HomeView extends StatelessWidget {
               ),
             );
           }
-          //jika state tidak dikenali
-          return ErrorRelayWidget();
+          return Text('404');
         },
       ),
     );
