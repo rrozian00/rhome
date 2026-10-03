@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rhome/cores/components/components.dart';
-import 'package:rhome/features/setting/bloc/setting_bloc.dart';
+
+import '../bloc/setting_bloc.dart';
 
 class ProfileSection extends StatelessWidget {
   const ProfileSection({super.key});
@@ -27,10 +27,7 @@ class ProfileSection extends StatelessWidget {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SubtitleText(state.user.name ?? ''),
-                  RegularText(state.user.email ?? ''),
-                ],
+                children: [Text('John Doe'), Text('john.doe@example.com')],
               ),
             ],
           );

@@ -1,15 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rhome/features/splash/splash_screen.dart';
 
 import 'cores/app/app_injection.dart';
+import 'cores/app/app_observer.dart';
 import 'cores/app/app_providers.dart';
-import 'cores/app/routes.dart';
-import 'cores/helpers/app_bloc_observer.dart';
-import 'cores/preferences/colors.dart';
-import 'cores/preferences/themes/light_theme.dart';
-import 'firebase_options.dart';
+import 'cores/firebase/firebase_options.dart';
+import 'cores/routes/routes.dart';
+import 'features/splash/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +28,6 @@ class MyApp extends StatelessWidget {
         onGenerateRoute: routes,
         initialRoute: SplashScreen.routeName,
         title: 'RHome',
-        theme: LightTheme(AppColors.black).theme,
       ),
     );
   }

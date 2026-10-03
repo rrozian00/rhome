@@ -19,3 +19,10 @@ subprojects { project.evaluationDependsOn(":app") }
 tasks.register<Delete>("clean") { delete(rootProject.layout.buildDirectory) }
 
 buildscript { extra.apply { set("ndkVersion", "27.0.12077973") } }
+
+plugins {
+    id("com.android.application") apply false
+    id("com.android.library") apply false
+    id("org.jetbrains.kotlin.android") apply false
+    id("com.google.gms.google-services") apply false
+}

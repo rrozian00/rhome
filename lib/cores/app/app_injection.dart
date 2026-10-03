@@ -1,46 +1,37 @@
 import 'package:get_it/get_it.dart';
-import 'package:rhome/features/auth/login/bloc/login_bloc.dart';
-import 'package:rhome/features/auth/register/bloc/register_bloc.dart';
-import 'package:rhome/features/auth/repositories/auth_repository.dart';
-import 'package:rhome/features/home/data/local/image_repository.dart';
-import 'package:rhome/features/home/data/remote/home_repository.dart';
-import 'package:rhome/features/home/presentation/bloc/relay_bloc.dart';
-import 'package:rhome/features/setting/bloc/setting_bloc.dart';
-import 'package:rhome/features/setting/repositories/setting_repository.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../../features/home/bloc/home_bloc.dart';
+import '../../features/repositories/image_repository.dart';
+import '../../features/repositories/relay_repository.dart';
+import '../../features/repositories/local_repository.dart';
+import '../../features/setting/bloc/setting_bloc.dart';
 
 final getIt = GetIt.instance;
 
 void setUpLocator() {
-  //Singleton
-  getIt.registerLazySingleton<AuthRepository>(() => AuthRepository());
-  getIt.registerLazySingleton<HomeRepository>(() => HomeRepository());
-  getIt.registerLazySingleton<ImageRepository>(() => ImageRepository());
-  getIt.registerLazySingleton<SettingRepository>(() => SettingRepository());
+  getIt.registerLazySingleton<ImagePicker>(() => ImagePicker());
 
-  //Factory
-  print("Registering RegisterBloc");
-  getIt.registerFactory(() => RegisterBloc(authRepo: getIt<AuthRepository>()));
+  getIt.registerLazySingleton<LocalRepository>(() => LocalRepository());
 
-  print("Registering LoginBloc");
-  getIt.registerFactory<LoginBloc>(
-    () => LoginBloc(authRepo: getIt<AuthRepository>()),
+  getIt.registerLazySingleton<RelayRepository>(() => RelayRepository());
+
+  getIt.registerLazySingleton<ImageRepository>(
+    () => ImageRepository(picker: getIt<ImagePicker>()),
   );
 
-  print("Registering SettingBloc");
-  getIt.registerFactory<SettingBloc>(
-    () => SettingBloc(
-      homeRepo: getIt<HomeRepository>(),
-      settingRepo: getIt<SettingRepository>(),
-      authRepo: getIt<AuthRepository>(),
+  getIt.registerFactory<HomeBloc>(
+    () => HomeBloc(
+      relayRepo: getIt<RelayRepository>(),
+      imageRepo: getIt<ImageRepository>(),
+      localRepo: getIt<LocalRepository>(),
     ),
   );
 
-  print("Registering RelayBloc");
-  getIt.registerFactory<RelayBloc>(
-    () => RelayBloc(
-      homeRepo: getIt<HomeRepository>(),
-      imageRepo: getIt<ImageRepository>(),
-      settingRepo: getIt<SettingRepository>(),
+  getIt.registerFactory<SettingBloc>(
+    () => SettingBloc(
+      relayRepo: getIt<RelayRepository>(),
+      localRepo: getIt<LocalRepository>(),
     ),
   );
 }

@@ -7,7 +7,7 @@ sealed class SettingEvent extends Equatable {
   List<Object> get props => [];
 }
 
-final class GetAppVersion extends SettingEvent {}
+final class GetSettings extends SettingEvent {}
 
 final class UpdateIpAddress extends SettingEvent {
   final String ipAddress;
@@ -16,5 +16,3 @@ final class UpdateIpAddress extends SettingEvent {
   @override
   List<Object> get props => [ipAddress];
 }
-
-final class DoLogout extends SettingEvent {}

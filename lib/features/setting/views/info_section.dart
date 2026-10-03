@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rhome/cores/components/components.dart';
-import 'package:rhome/cores/preferences/colors.dart';
-import 'package:rhome/features/setting/bloc/setting_bloc.dart';
+
+import '../bloc/setting_bloc.dart';
 
 class InfoSection extends StatelessWidget {
   const InfoSection({super.key});
@@ -25,17 +24,17 @@ class InfoSection extends StatelessWidget {
               Text("IP Address : ${curentState.ipAdress}"),
               Text(
                 "App Version : ${curentState.appVersion}",
-                style: TextStyle(color: AppColors.textDisabled),
+                style: TextStyle(color: Colors.grey),
               ),
 
               Padding(
                 padding: const EdgeInsets.only(top: 12.0),
-                child: RegularText(
+                child: Text(
                   "By : Ricky Rozian",
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textDisabled,
+                    color: Colors.grey,
                   ),
                 ),
               ),
