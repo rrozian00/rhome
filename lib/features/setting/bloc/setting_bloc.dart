@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../cores/app/app_version.dart';
-import '../../repositories/local_repository.dart';
+import '../../../cores/repositories/local_repository.dart';
 
 part 'setting_event.dart';
 part 'setting_state.dart';

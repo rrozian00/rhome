@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:rhome/cores/database/database_helper.dart';
 import 'package:rhome/cores/error/failure.dart';
-import 'package:rhome/features/models/button_model.dart';
+import 'package:rhome/cores/models/button_model.dart';
 
 class LocalRepository {
   Future<Either<Failure, void>> saveButton(ButtonModel button) async {

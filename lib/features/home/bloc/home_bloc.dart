@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:rhome/features/models/button_model.dart';
+import 'package:rhome/cores/models/button_model.dart';
 
 import '../../../cores/helper/http_response_helper.dart';
-import '../../repositories/local_repository.dart';
+import '../../../cores/repositories/local_repository.dart';
 import 'home_event.dart';
 import 'home_state.dart';
 
@@ -111,16 +111,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     emit(HomeLoading());
+    final pickedImage = event.pickedImage;
 
-    final XFile? pickedImage = await imagePicker.pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedImage != null) {
-      await localRepo.updateButton(
-        event.button.copyWith(image: pickedImage.path),
-      );
-      add(LoadRelayStatusEvent());
-    }
+    event.button.copyWith(image: pickedImage);
+    add(LoadRelayStatusEvent());
   }
 
   Future<void> _onResetImage(ResetImage event, Emitter<HomeState> emit) async {

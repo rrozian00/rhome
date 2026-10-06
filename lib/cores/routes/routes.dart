@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
+import '../../features/button_list/views/add_button_view.dart';
+import '../../features/button_list/views/button_list_view.dart';
 import '../../features/home/views/home_view.dart';
 import '../../features/setting/views/setting_view.dart';
 import '../../features/splash/splash_screen.dart';
 
-final Map<String, WidgetBuilder> appRoutes = {
+final appRoutes = {
+  SplashScreen.routeName: (context) => const SplashScreen(),
   HomeView.routeName: (context) => const HomeView(),
   SettingView.routeName: (context) => const SettingView(),
-
-  SplashScreen.routeName: (context) => const SplashScreen(),
+  ButtonListView.routeName: (context) => const ButtonListView(),
+  AddButtonView.routeName: (context) => const AddButtonView(),
 };
 
 Route<dynamic> routes(RouteSettings settings) {

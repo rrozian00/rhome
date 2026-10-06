@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:rhome/features/models/button_model.dart';
-import 'package:rhome/features/repositories/local_repository.dart';
+import 'package:rhome/cores/models/button_model.dart';
+import 'package:rhome/cores/repositories/local_repository.dart';
 
 part 'button_list_state.dart';
 
@@ -12,19 +12,15 @@ class ButtonListCubit extends Cubit<ButtonListState> {
 
   Future<void> addButton(ButtonModel button) async {
     emit(ButtonListLoading());
-    try {
-      await Future.delayed(Duration(seconds: 1));
-      final currentState = state;
-      if (currentState is ButtonListLoaded) {
-        final updatedButtons = List<ButtonModel>.from(currentState.buttons)
-          ..add(button);
-        emit(ButtonListLoaded(updatedButtons));
-      } else {
-        emit(ButtonListLoaded([button]));
-      }
-    } catch (e) {
-      emit(ButtonListError(e.toString()));
+
+    final res = await localRepository.saveButton(button);
+    final error = res.fold((l) => l, (r) => null);
+    if (error != null) {
+      emit(ButtonListError(error.message));
+      return;
     }
+
+    loadButtons();
   }
 
   Future<void> loadButtons() async {
@@ -38,5 +34,27 @@ class ButtonListCubit extends Cubit<ButtonListState> {
     } catch (e) {
       emit(ButtonListError(e.toString()));
     }
+  }
+
+  Future<void> deleteButton(int id) async {
+    emit(ButtonListLoading());
+    final res = await localRepository.deleteButton(id);
+    final error = res.fold((l) => l, (r) => null);
+    if (error != null) {
+      emit(ButtonListError(error.message));
+      return;
+    }
+    loadButtons();
+  }
+
+  Future<void> updateButton(ButtonModel button) async {
+    emit(ButtonListLoading());
+    final res = await localRepository.updateButton(button);
+    final error = res.fold((l) => l, (r) => null);
+    if (error != null) {
+      emit(ButtonListError(error.message));
+      return;
+    }
+    loadButtons();
   }
 }

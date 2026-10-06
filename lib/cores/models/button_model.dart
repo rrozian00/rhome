@@ -1,10 +1,10 @@
 class ButtonModel {
-  final String id;
+  final int? id;
   final String name;
   final String image;
-  ButtonModel({required this.id, required this.name, required this.image});
+  ButtonModel({this.id, required this.name, required this.image});
 
-  ButtonModel copyWith({String? id, String? name, String? image}) {
+  ButtonModel copyWith({int? id, String? name, String? image}) {
     return ButtonModel(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -18,7 +18,7 @@ class ButtonModel {
 
   factory ButtonModel.fromMap(Map<String, dynamic> map) {
     return ButtonModel(
-      id: map['id'] as String,
+      id: map['id'] as int,
       name: map['name'] as String,
       image: map['image'] as String,
     );

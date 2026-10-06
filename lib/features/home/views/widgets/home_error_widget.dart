@@ -4,9 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/home_bloc.dart';
 import '../../bloc/home_event.dart';
 
-class ErrorRelayWidget extends StatelessWidget {
+class HomeErrorWidget extends StatelessWidget {
   final String message;
-  const ErrorRelayWidget({super.key, required this.message});
+  const HomeErrorWidget({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {

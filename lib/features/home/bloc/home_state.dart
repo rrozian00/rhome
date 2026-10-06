@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:rhome/features/models/button_model.dart';
+import 'package:rhome/cores/models/button_model.dart';
 
 abstract class HomeState extends Equatable {
   const HomeState();

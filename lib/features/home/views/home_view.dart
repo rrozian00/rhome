@@ -7,7 +7,7 @@ import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
 
 import 'widgets/button_widgets.dart';
-import 'widgets/error_relay_widget.dart';
+import 'widgets/home_error_widget.dart';
 import 'widgets/header_widget.dart';
 
 class HomeView extends StatelessWidget {
@@ -43,7 +43,7 @@ class HomeView extends StatelessWidget {
                 context.read<HomeBloc>().add(LoadRelayStatusEvent());
               },
 
-              child: ErrorRelayWidget(message: state.message),
+              child: HomeErrorWidget(message: state.message),
             );
           }
           if (state is HomeLoaded) {

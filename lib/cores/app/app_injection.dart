@@ -1,8 +1,9 @@
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:rhome/features/button_list/cubit/button_list_cubit.dart';
 
 import '../../features/home/bloc/home_bloc.dart';
-import '../../features/repositories/local_repository.dart';
+import '../repositories/local_repository.dart';
 import '../../features/setting/bloc/setting_bloc.dart';
 import '../helper/http_response_helper.dart';
 
@@ -25,5 +26,8 @@ void setUpLocator() {
 
   getIt.registerFactory<SettingBloc>(
     () => SettingBloc(localRepo: getIt<LocalRepository>()),
+  );
+  getIt.registerFactory<ButtonListCubit>(
+    () => ButtonListCubit(localRepository: getIt<LocalRepository>()),
   );
 }

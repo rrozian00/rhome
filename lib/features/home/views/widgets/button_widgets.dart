@@ -3,7 +3,7 @@ import 'dart:io';
 import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../models/button_model.dart';
+import '../../../../cores/models/button_model.dart';
 import '../../bloc/home_bloc.dart';
 import '../../bloc/home_event.dart';
 
@@ -62,42 +62,11 @@ class ButtonWidgets extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CircleAvatar(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.blue,
-                              child: IconButton(
-                                onPressed: () {
-                                  _showRenameDialog(
-                                    context,
-                                    button,
-                                    button.name,
-                                  );
-                                },
-                                icon: Icon(Icons.edit),
-                              ),
-                            ),
-                            CircleAvatar(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.black,
-                              child: IconButton(
-                                onPressed: () {
-                                  _showOptionDialog(context, button);
-                                },
-                                icon: Icon(Icons.image),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      SizedBox(height: 6),
                       ClipOval(
                         child: CircleAvatar(
                           backgroundColor: Colors.grey[300],
-                          radius: MediaQuery.of(context).size.width / 7,
+                          radius: MediaQuery.of(context).size.width / 5,
                           child:
                               button.image != ''
                                   ? Image.file(
@@ -155,82 +124,4 @@ class ButtonWidgets extends StatelessWidget {
       ),
     );
   }
-}
-
-void _showRenameDialog(
-  BuildContext context,
-  ButtonModel button,
-  String currentName,
-) {
-  final TextEditingController controller = TextEditingController(
-    text: currentName,
-  );
-
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        scrollable: false,
-        title: const Text('Rename'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: controller,
-              textCapitalization: TextCapitalization.words,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              context.read<HomeBloc>().add(
-                RenameHomeEvent(button: button, newName: controller.text),
-              );
-              Navigator.pop(context);
-            },
-            child: const Text(
-              'Save',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-void _showOptionDialog(BuildContext context, ButtonModel button) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: Text("Options"),
-        content: Column(
-          spacing: 20,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                context.read<HomeBloc>().add(PickImageEvent(button: button));
-                Navigator.pop(context);
-              },
-              child: Text("Change Picture"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                context.read<HomeBloc>().add(ResetImage(button: button));
-                Navigator.pop(context);
-              },
-              child: Text("Reset Picture"),
-            ),
-          ],
-        ),
-      );
-    },
-  );
 }

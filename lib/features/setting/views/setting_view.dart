@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rhome/features/button_list/views/button_list_view.dart';
+import 'package:rhome/features/button_list/cubit/button_list_cubit.dart';
 import '../bloc/setting_bloc.dart';
 import 'info_section.dart';
 
@@ -37,9 +39,15 @@ class SettingView extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ListTile(
-                          leading: Icon(Icons.add),
-                          title: Text("Add Button"),
-                          onTap: () {},
+                          leading: Icon(Icons.list),
+                          title: Text("Button List"),
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              ButtonListView.routeName,
+                            );
+                            context.read<ButtonListCubit>().loadButtons();
+                          },
                         ),
 
                         ListTile(

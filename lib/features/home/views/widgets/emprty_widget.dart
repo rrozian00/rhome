@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rhome/features/setting/views/setting_view.dart';
+
+import '../../../button_list/views/add_button_view.dart';
 
 class EmprtyWidget extends StatelessWidget {
   const EmprtyWidget({super.key});
@@ -19,7 +20,7 @@ class EmprtyWidget extends StatelessWidget {
           SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
-              Navigator.pushNamed(context, SettingView.routeName);
+              Navigator.pushNamed(context, AddButtonView.routeName);
             },
             child: Text("Add Button"),
           ),

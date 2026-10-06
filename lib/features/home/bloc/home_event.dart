@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../models/button_model.dart';
+import '../../../cores/models/button_model.dart';
 
 abstract class HomeEvent extends Equatable {
   const HomeEvent();
@@ -13,11 +13,12 @@ class LoadRelayStatusEvent extends HomeEvent {}
 
 class PickImageEvent extends HomeEvent {
   final ButtonModel button;
+  final String pickedImage;
 
-  const PickImageEvent({required this.button});
+  const PickImageEvent({required this.button, required this.pickedImage});
 
   @override
-  List<Object> get props => [button];
+  List<Object> get props => [button, pickedImage];
 }
 
 class TurnOnHomeEvent extends HomeEvent {
