@@ -2,10 +2,9 @@ import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../features/home/bloc/home_bloc.dart';
-import '../../features/repositories/image_repository.dart';
-import '../../features/repositories/relay_repository.dart';
 import '../../features/repositories/local_repository.dart';
 import '../../features/setting/bloc/setting_bloc.dart';
+import '../helper/http_response_helper.dart';
 
 final getIt = GetIt.instance;
 
@@ -14,24 +13,17 @@ void setUpLocator() {
 
   getIt.registerLazySingleton<LocalRepository>(() => LocalRepository());
 
-  getIt.registerLazySingleton<RelayRepository>(() => RelayRepository());
-
-  getIt.registerLazySingleton<ImageRepository>(
-    () => ImageRepository(picker: getIt<ImagePicker>()),
-  );
+  getIt.registerLazySingleton<HttpResponseHelper>(() => HttpResponseHelper());
 
   getIt.registerFactory<HomeBloc>(
     () => HomeBloc(
-      relayRepo: getIt<RelayRepository>(),
-      imageRepo: getIt<ImageRepository>(),
+      httpResponseHelper: getIt<HttpResponseHelper>(),
+      imagePicker: getIt<ImagePicker>(),
       localRepo: getIt<LocalRepository>(),
     ),
   );
 
   getIt.registerFactory<SettingBloc>(
-    () => SettingBloc(
-      relayRepo: getIt<RelayRepository>(),
-      localRepo: getIt<LocalRepository>(),
-    ),
+    () => SettingBloc(localRepo: getIt<LocalRepository>()),
   );
 }

@@ -3,21 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rhome/features/setting/bloc/setting_bloc.dart';
 
 import '../../../setting/views/setting_view.dart';
+import '../../bloc/home_bloc.dart';
 import '../../bloc/home_state.dart';
 
 class HeaderWidget extends StatelessWidget {
-  const HeaderWidget({super.key, required this.state});
-
-  final HomeLoaded state;
+  const HeaderWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    bool isConnected = false;
-
-    if (state.isConnected == true) {
-      isConnected = state.isConnected;
-    }
-
     return SafeArea(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -35,26 +28,33 @@ class HeaderWidget extends StatelessWidget {
             ),
           ),
 
-          Row(
-            children: [
-              Icon(
-                Icons.circle,
+          BlocBuilder<HomeBloc, HomeState>(
+            builder: (context, state) {
+              final isConnected =
+                  state is HomeLoaded ? state.isConnected : false;
 
-                color: isConnected ? Colors.green : Colors.red,
+              return Row(
+                children: [
+                  Icon(
+                    Icons.circle,
 
-                size: 12,
-              ),
+                    color: isConnected ? Colors.green : Colors.red,
 
-              const SizedBox(width: 8),
+                    size: 12,
+                  ),
 
-              Text(
-                isConnected ? "Connected" : "Disconnected",
+                  const SizedBox(width: 8),
 
-                style: TextStyle(
-                  color: isConnected ? Colors.green : Colors.red,
-                ),
-              ),
-            ],
+                  Text(
+                    isConnected ? "Connected" : "Disconnected",
+
+                    style: TextStyle(
+                      color: isConnected ? Colors.green : Colors.red,
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
 
           Row(

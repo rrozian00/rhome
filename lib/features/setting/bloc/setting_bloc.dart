@@ -4,7 +4,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../cores/app/app_version.dart';
-import '../../repositories/relay_repository.dart';
 import '../../repositories/local_repository.dart';
 
 part 'setting_event.dart';
@@ -12,10 +11,8 @@ part 'setting_state.dart';
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
   final LocalRepository localRepo;
-  final RelayRepository relayRepo;
 
-  SettingBloc({required this.localRepo, required this.relayRepo})
-    : super(SettingInitial()) {
+  SettingBloc({required this.localRepo}) : super(SettingInitial()) {
     on<GetSettings>(_onGetSettings);
     on<UpdateIpAddress>(_onUpdateIpAddress);
   }
@@ -23,7 +20,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   void _onGetSettings(GetSettings event, Emitter<SettingState> emit) async {
     emit(SettingLoading());
     final version = await getAppVersion();
-    final resIp = await localRepo.getLocalIp();
+    final resIp = await localRepo.getIpFromLocal();
     final ipAddress = resIp.fold((l) => "", (r) => r);
     emit(SettingLoaded(appVersion: version, ipAdress: ipAddress));
   }

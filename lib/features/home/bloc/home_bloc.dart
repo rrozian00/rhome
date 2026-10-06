@@ -1,32 +1,28 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:rhome/features/models/button_model.dart';
 
-import '../../repositories/image_repository.dart';
+import '../../../cores/helper/http_response_helper.dart';
 import '../../repositories/local_repository.dart';
-import '../../repositories/relay_repository.dart';
 import 'home_event.dart';
 import 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  final RelayRepository relayRepo;
+  final HttpResponseHelper httpResponseHelper;
   final LocalRepository localRepo;
-  final ImageRepository imageRepo;
+  final ImagePicker imagePicker;
 
   HomeBloc({
-    required this.relayRepo,
-
+    required this.httpResponseHelper,
     required this.localRepo,
-    required this.imageRepo,
-  }) : super(HomeLoaded.initial()) {
+    required this.imagePicker,
+  }) : super(HomeInitial()) {
     on<PickImageEvent>(_onPickImage);
-
     on<ResetImage>(_onResetImage);
-
-    on<RenameHomeEvent>(_onRenameRelay);
-
+    on<RenameHomeEvent>(_onRenameButton);
     on<TurnOnHomeEvent>(_onTurnOnRelay);
-
     on<TurnOffHomeEvent>(_onTurnOffRelay);
     on<LoadRelayStatusEvent>(_onLoadRelayStatus);
   }
@@ -36,13 +32,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     final ip = await getIpAddress();
-    final result = await relayRepo.getRelayStatus(ip);
-    final relayNames = await getRelayNames();
-    final imagePaths = await getImages();
+    final relayStatusRes = await httpResponseHelper.getRelayStatus(ip);
+    final buttons = await getButtons();
+    final connectionRes = await httpResponseHelper.getResponseStatus(ip);
 
     emit(HomeLoading());
 
-    result.fold(
+    final error = connectionRes.fold((l) => l, (r) => null);
+    if (error != null) {
+      emit(HomeError(message: error.message));
+      return;
+    }
+    final isConnected = connectionRes.fold((l) => false, (r) => r);
+
+    relayStatusRes.fold(
       (error) {
         emit(HomeError(message: error.message));
       },
@@ -50,10 +53,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(
           HomeLoaded(
             relayStates: r,
-            relayNames: relayNames,
-            isConnected: true,
+            isConnected: isConnected,
             ipAddress: ip,
-            imagePath: imagePaths,
+            buttons: buttons,
           ),
         );
       },
@@ -66,7 +68,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     final current = state as HomeLoaded;
     final ip = await getIpAddress();
-    final result = await relayRepo.getResponseOn(event.index, ip);
+    final result = await httpResponseHelper.getResponseOn(event.index, ip);
 
     result.fold(
       (error) {
@@ -88,7 +90,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final current = state as HomeLoaded;
 
     final ip = await getIpAddress();
-    final result = await relayRepo.getResponseOff(event.index, ip);
+    final result = await httpResponseHelper.getResponseOff(event.index, ip);
 
     result.fold(
       (error) {
@@ -108,63 +110,56 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     Emitter<HomeState> emit,
   ) async {
-    final current = state as HomeLoaded;
-
     emit(HomeLoading());
 
-    final result = await imageRepo.setImage(event.index);
-
-    final error = result.fold((l) => l, (r) => null);
-    if (error != null) {
-      emit(HomeError(message: error.message));
-    }
-    final imagePaths = await imageRepo.getImages().then(
-      (r) => r.fold((l) => current.imagePath, (r) => r),
+    final XFile? pickedImage = await imagePicker.pickImage(
+      source: ImageSource.gallery,
     );
-    emit(current.copyWith(imagePath: imagePaths));
+    if (pickedImage != null) {
+      await localRepo.updateButton(
+        event.button.copyWith(image: pickedImage.path),
+      );
+      add(LoadRelayStatusEvent());
+    }
   }
 
   Future<void> _onResetImage(ResetImage event, Emitter<HomeState> emit) async {
-    if (state is! HomeLoaded) return;
-
-    final current = state as HomeLoaded;
-
     emit(HomeLoading());
 
-    final result = await imageRepo.resetImage(event.index);
+    final buttonModel = event.button;
+
+    final result = await localRepo.updateButton(
+      buttonModel.copyWith(image: ""),
+    );
 
     final error = result.fold((l) => l, (r) => null);
     if (error != null) {
       emit(HomeError(message: error.message));
     }
-    final imagePaths = await imageRepo.getImages().then(
-      (r) => r.fold((l) => current.imagePath, (r) => r),
-    );
-
-    emit(current.copyWith(imagePath: imagePaths));
+    add(LoadRelayStatusEvent());
   }
 
-  Future<void> _onRenameRelay(
+  Future<void> _onRenameButton(
     RenameHomeEvent event,
-
     Emitter<HomeState> emit,
   ) async {
-    if (state is HomeLoaded) {
-      final curentState = state as HomeLoaded;
-      final updatedNames = List<String>.from(curentState.relayNames);
-      updatedNames[event.index] = event.newName;
+    emit(HomeLoading());
 
-      final res = await localRepo.updateLocalRelayNames(updatedNames);
+    final buttonModel = event.button;
 
-      res.fold(
-        (l) => emit(HomeError(message: l.message)),
-        (r) => emit(curentState.copyWith(relayNames: updatedNames)),
-      );
+    final result = await localRepo.updateButton(
+      buttonModel.copyWith(name: event.newName),
+    );
+
+    final error = result.fold((l) => l, (r) => null);
+    if (error != null) {
+      emit(HomeError(message: error.message));
     }
+    add(LoadRelayStatusEvent());
   }
 
   Future<String> getIpAddress() async {
-    final ipRes = await localRepo.getLocalIp();
+    final ipRes = await localRepo.getIpFromLocal();
     final error = ipRes.fold((l) => l, (r) => null);
     if (error != null) {
       return 'IP tidak ditemukan';
@@ -173,23 +168,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     return ip ?? 'IP tidak ditemukan';
   }
 
-  Future<List<String>> getRelayNames() async {
-    final nameRes = await localRepo.getLocalRelayNames();
+  Future<List<ButtonModel>> getButtons() async {
+    final nameRes = await localRepo.getButtons();
     final error = nameRes.fold((l) => l, (r) => null);
     if (error != null) {
       return [];
     }
     final names = nameRes.fold((l) => null, (r) => r);
     return names ?? [];
-  }
-
-  Future<List<String>> getImages() async {
-    final imageRes = await imageRepo.getImages();
-    final error = imageRes.fold((l) => l, (r) => null);
-    if (error != null) {
-      return [];
-    }
-    final images = imageRes.fold((l) => null, (r) => r);
-    return images ?? [];
   }
 }

@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../models/button_model.dart';
+
 abstract class HomeEvent extends Equatable {
   const HomeEvent();
 
@@ -10,12 +12,12 @@ abstract class HomeEvent extends Equatable {
 class LoadRelayStatusEvent extends HomeEvent {}
 
 class PickImageEvent extends HomeEvent {
-  final int index;
+  final ButtonModel button;
 
-  const PickImageEvent({required this.index});
+  const PickImageEvent({required this.button});
 
   @override
-  List<Object> get props => [index];
+  List<Object> get props => [button];
 }
 
 class TurnOnHomeEvent extends HomeEvent {
@@ -37,20 +39,20 @@ class TurnOffHomeEvent extends HomeEvent {
 }
 
 class ResetImage extends HomeEvent {
-  final int index;
+  final ButtonModel button;
 
-  const ResetImage(this.index);
+  const ResetImage({required this.button});
 
   @override
-  List<Object> get props => [index];
+  List<Object> get props => [button];
 }
 
 class RenameHomeEvent extends HomeEvent {
-  final int index;
+  final ButtonModel button;
   final String newName;
 
-  const RenameHomeEvent({required this.index, required this.newName});
+  const RenameHomeEvent({required this.button, required this.newName});
 
   @override
-  List<Object> get props => [index, newName];
+  List<Object> get props => [button, newName];
 }

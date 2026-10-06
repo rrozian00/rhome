@@ -3,15 +3,19 @@ import 'dart:io';
 import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../models/button_model.dart';
 import '../../bloc/home_bloc.dart';
 import '../../bloc/home_event.dart';
-import '../../bloc/home_state.dart';
 
 class ButtonWidgets extends StatelessWidget {
-  const ButtonWidgets({super.key, required this.length, required this.states});
+  const ButtonWidgets({
+    super.key,
+    required this.buttons,
+    required this.buttonStates,
+  });
 
-  final int length;
-  final HomeLoaded states;
+  final List<ButtonModel> buttons;
+  final List<bool> buttonStates;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +25,7 @@ class ButtonWidgets extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: GridView.builder(
-        itemCount: length,
+        itemCount: buttons.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: isTablet ? 4 : 2,
           crossAxisSpacing: 20,
@@ -29,28 +33,30 @@ class ButtonWidgets extends StatelessWidget {
           childAspectRatio: isTablet ? 0.5 : 0.75,
         ),
         itemBuilder: (context, index) {
-          final bloc = context.read<HomeBloc>();
-          final relay = states.relayStates[index];
+          final button = buttons[index];
           return Material(
             elevation: 4,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
-            color: relay == true ? Colors.green[200] : Colors.red[200],
+            color:
+                buttonStates[index] == true
+                    ? Colors.green[200]
+                    : Colors.red[200],
             child: InkWell(
               borderRadius: BorderRadius.circular(15),
               onTap: () {
-                if (relay) {
-                  bloc.add(TurnOffHomeEvent(index));
+                if (buttonStates[index]) {
+                  context.read<HomeBloc>().add(TurnOffHomeEvent(index));
                 } else {
-                  bloc.add(TurnOnHomeEvent(index));
+                  context.read<HomeBloc>().add(TurnOnHomeEvent(index));
                 }
               },
 
               //Button
               child: AnimatedScale(
                 duration: Duration(milliseconds: 300),
-                scale: relay == true ? 1 : 0.95,
+                scale: buttonStates[index] == true ? 1 : 0.95,
                 child: Center(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,8 +74,8 @@ class ButtonWidgets extends StatelessWidget {
                                 onPressed: () {
                                   _showRenameDialog(
                                     context,
-                                    index,
-                                    states.relayNames[index],
+                                    button,
+                                    button.name,
                                   );
                                 },
                                 icon: Icon(Icons.edit),
@@ -80,7 +86,7 @@ class ButtonWidgets extends StatelessWidget {
                               foregroundColor: Colors.black,
                               child: IconButton(
                                 onPressed: () {
-                                  _showOptionDialog(context, index);
+                                  _showOptionDialog(context, button);
                                 },
                                 icon: Icon(Icons.image),
                               ),
@@ -93,9 +99,9 @@ class ButtonWidgets extends StatelessWidget {
                           backgroundColor: Colors.grey[300],
                           radius: MediaQuery.of(context).size.width / 7,
                           child:
-                              states.imagePath[index] != ''
+                              button.image != ''
                                   ? Image.file(
-                                    File(states.imagePath[index]),
+                                    File(button.image),
                                     fit: BoxFit.cover,
                                     height: double.infinity,
                                     width: double.infinity,
@@ -112,7 +118,7 @@ class ButtonWidgets extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              states.relayNames[index],
+                              button.name,
                               style: TextStyle(
                                 shadows: [
                                   Shadow(
@@ -122,14 +128,18 @@ class ButtonWidgets extends StatelessWidget {
                                   ),
                                 ],
                                 color:
-                                    relay == true ? Colors.green : Colors.red,
+                                    buttonStates[index] == true
+                                        ? Colors.green
+                                        : Colors.red,
                               ),
                             ),
                             Text(
-                              relay == true ? "ON" : "OFF",
+                              buttonStates[index] == true ? "ON" : "OFF",
                               style: TextStyle(
                                 color:
-                                    relay == true ? Colors.red : Colors.white,
+                                    buttonStates[index] == true
+                                        ? Colors.red
+                                        : Colors.white,
                               ),
                             ),
                           ],
@@ -147,7 +157,11 @@ class ButtonWidgets extends StatelessWidget {
   }
 }
 
-void _showRenameDialog(BuildContext context, int index, String currentName) {
+void _showRenameDialog(
+  BuildContext context,
+  ButtonModel button,
+  String currentName,
+) {
   final TextEditingController controller = TextEditingController(
     text: currentName,
   );
@@ -175,7 +189,7 @@ void _showRenameDialog(BuildContext context, int index, String currentName) {
           TextButton(
             onPressed: () {
               context.read<HomeBloc>().add(
-                RenameHomeEvent(index: index, newName: controller.text),
+                RenameHomeEvent(button: button, newName: controller.text),
               );
               Navigator.pop(context);
             },
@@ -190,7 +204,7 @@ void _showRenameDialog(BuildContext context, int index, String currentName) {
   );
 }
 
-void _showOptionDialog(BuildContext context, int index) {
+void _showOptionDialog(BuildContext context, ButtonModel button) {
   showDialog(
     context: context,
     builder: (context) {
@@ -202,14 +216,14 @@ void _showOptionDialog(BuildContext context, int index) {
           children: [
             ElevatedButton(
               onPressed: () {
-                context.read<HomeBloc>().add(PickImageEvent(index: index));
+                context.read<HomeBloc>().add(PickImageEvent(button: button));
                 Navigator.pop(context);
               },
               child: Text("Change Picture"),
             ),
             ElevatedButton(
               onPressed: () {
-                context.read<HomeBloc>().add(ResetImage(index));
+                context.read<HomeBloc>().add(ResetImage(button: button));
                 Navigator.pop(context);
               },
               child: Text("Reset Picture"),

@@ -1,46 +1,81 @@
 import 'package:dartz/dartz.dart';
+import 'package:rhome/cores/database/database_helper.dart';
 import 'package:rhome/cores/error/failure.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rhome/features/models/button_model.dart';
 
 class LocalRepository {
-  Future<Either<Failure, void>> saveIpToLocal(String ipAddress) async {
+  Future<Either<Failure, void>> saveButton(ButtonModel button) async {
+    final db = await DatabaseHelper.database;
+
     try {
-      final pref = await SharedPreferences.getInstance();
-      await pref.setString("ipAddress", ipAddress);
+      await db.insert(DatabaseHelper.buttonTable, button.toMap());
       return const Right(null);
     } catch (e) {
       return Left(Failure(e.toString()));
     }
   }
 
-  Future<Either<Failure, String>> getLocalIp() async {
+  Future<Either<Failure, List<ButtonModel>>> getButtons() async {
+    final db = await DatabaseHelper.database;
+
     try {
-      final pref = await SharedPreferences.getInstance();
-      final ip = pref.getString("ipAddress");
-      return Right(ip!);
+      final buttonRes = await db.query(DatabaseHelper.buttonTable);
+      final buttons = buttonRes.map((e) => ButtonModel.fromMap(e)).toList();
+      return Right(buttons);
     } catch (e) {
       return Left(Failure(e.toString()));
     }
   }
 
-  Future<Either<Failure, List<String>>> updateLocalRelayNames(
-    List<String> names,
-  ) async {
-    try {
-      final pref = await SharedPreferences.getInstance();
+  Future<Either<Failure, void>> deleteButton(int id) async {
+    final db = await DatabaseHelper.database;
 
-      await pref.setStringList("relayNames", names);
-      return Right(names);
+    try {
+      await db.delete(
+        DatabaseHelper.buttonTable,
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+      return const Right(null);
     } catch (e) {
       return Left(Failure(e.toString()));
     }
   }
 
-  Future<Either<Failure, List<String>>> getLocalRelayNames() async {
+  Future<Either<Failure, void>> updateButton(ButtonModel button) async {
+    final db = await DatabaseHelper.database;
+
     try {
-      final pref = await SharedPreferences.getInstance();
-      final names = pref.getStringList("relayNames");
-      return Right(names ?? []);
+      await db.update(
+        DatabaseHelper.buttonTable,
+        button.toMap(),
+        where: 'id = ?',
+        whereArgs: [button.id],
+      );
+      return const Right(null);
+    } catch (e) {
+      return Left(Failure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, void>> saveIpToLocal(String ipAddress) async {
+    final db = await DatabaseHelper.database;
+
+    try {
+      await db.insert(DatabaseHelper.ipTable, {'ipAddress': ipAddress});
+      return const Right(null);
+    } catch (e) {
+      return Left(Failure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, String>> getIpFromLocal() async {
+    final db = await DatabaseHelper.database;
+
+    try {
+      final ipRes = await db.query(DatabaseHelper.ipTable);
+      final ipAddress = ipRes.first['ipAddress'] as String;
+      return Right(ipAddress);
     } catch (e) {
       return Left(Failure(e.toString()));
     }

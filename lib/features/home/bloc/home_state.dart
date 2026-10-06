@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:rhome/features/models/button_model.dart';
 
 abstract class HomeState extends Equatable {
   const HomeState();
@@ -6,6 +7,8 @@ abstract class HomeState extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+final class HomeInitial extends HomeState {}
 
 final class HomeLoading extends HomeState {}
 
@@ -21,45 +24,31 @@ final class HomeError extends HomeState {
 class HomeLoaded extends HomeState {
   final String ipAddress;
   final bool isConnected;
-  final List<String> relayNames;
+  final List<ButtonModel> buttons;
   final List<bool> relayStates;
-  final List<String> imagePath;
 
   const HomeLoaded({
     required this.ipAddress,
     required this.isConnected,
 
-    required this.relayNames,
+    required this.buttons,
     required this.relayStates,
-    required this.imagePath,
   });
 
   HomeLoaded copyWith({
     String? ipAddress,
     bool? isConnected,
-    List<String>? relayNames,
+    List<ButtonModel>? buttons,
     List<bool>? relayStates,
-    List<String>? imagePath,
   }) {
     return HomeLoaded(
       ipAddress: ipAddress ?? this.ipAddress,
       isConnected: isConnected ?? this.isConnected,
-      relayNames: relayNames ?? List.of(this.relayNames),
+      buttons: buttons ?? List.of(this.buttons),
       relayStates: relayStates ?? List.of(this.relayStates),
-      imagePath: imagePath ?? List.of(this.imagePath),
-    );
-  }
-
-  factory HomeLoaded.initial() {
-    return const HomeLoaded(
-      ipAddress: "",
-      isConnected: false,
-      relayNames: ["", "", "", ""],
-      relayStates: [false, false, false, false],
-      imagePath: ["", "", "", ""],
     );
   }
 
   @override
-  List<Object> get props => [isConnected, relayNames, relayStates, imagePath];
+  List<Object> get props => [isConnected, buttons, relayStates];
 }

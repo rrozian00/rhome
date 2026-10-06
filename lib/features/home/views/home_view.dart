@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rhome/features/home/views/widgets/emprty_widget.dart';
 
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
@@ -9,22 +10,10 @@ import 'widgets/button_widgets.dart';
 import 'widgets/error_relay_widget.dart';
 import 'widgets/header_widget.dart';
 
-class HomeView extends StatefulWidget {
+class HomeView extends StatelessWidget {
   const HomeView({super.key});
 
   static const routeName = '/home';
-
-  @override
-  State<HomeView> createState() => _HomeViewState();
-}
-
-class _HomeViewState extends State<HomeView> {
-  @override
-  void initState() {
-    super.initState();
-
-    context.read<HomeBloc>().add(LoadRelayStatusEvent());
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,21 +26,16 @@ class _HomeViewState extends State<HomeView> {
           MediaQuery.of(context).size.height * .5,
         ),
 
-        child: BlocBuilder<HomeBloc, HomeState>(
-          builder: (context, state) {
-            if (state is! HomeLoaded) {
-              return const SizedBox();
-            }
-
-            return HeaderWidget(state: state);
-          },
-        ),
+        child: HeaderWidget(),
       ),
 
       body: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
           if (state is HomeLoading) {
             return const Center(child: CircularProgressIndicator.adaptive());
+          }
+          if (state is HomeLoaded && state.buttons.isEmpty) {
+            return EmprtyWidget();
           }
           if (state is HomeError) {
             return RefreshIndicator(
@@ -62,17 +46,6 @@ class _HomeViewState extends State<HomeView> {
               child: ErrorRelayWidget(message: state.message),
             );
           }
-
-          // if (state.isConnected == false) {
-          //   return RefreshIndicator(
-          //     onRefresh: () async {
-          //       context.read<HomeBloc>().add(LoadRelayStatusEvent());
-          //     },
-
-          //     child: ErrorRelayWidget(message: state.message),
-          //   );
-          // }
-
           if (state is HomeLoaded) {
             return RefreshIndicator(
               onRefresh: () async {
@@ -80,8 +53,8 @@ class _HomeViewState extends State<HomeView> {
               },
 
               child: ButtonWidgets(
-                states: state,
-                length: state.relayStates.length,
+                buttons: state.buttons,
+                buttonStates: state.relayStates,
               ),
             );
           }

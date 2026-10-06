@@ -1,9 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/setting_bloc.dart';
 import 'info_section.dart';
-import 'profile_section.dart';
 
 class SettingView extends StatelessWidget {
   const SettingView({super.key});
@@ -34,21 +32,16 @@ class SettingView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ProfileSection(),
                   Expanded(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ListTile(
-                          leading: Icon(Icons.edit),
-                          title: Text("Ubah Profil"),
+                          leading: Icon(Icons.add),
+                          title: Text("Add Button"),
                           onTap: () {},
                         ),
-                        ListTile(
-                          leading: Icon(Icons.password),
-                          title: Text("Ubah Password"),
-                          onTap: () {},
-                        ),
+
                         ListTile(
                           leading: Icon(Icons.help),
                           title: Text("Customize IP"),
