@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:rhome/cores/database/database_helper.dart';
 import 'package:rhome/cores/error/failure.dart';
 import 'package:rhome/cores/models/button_model.dart';
+import 'package:sqflite/sqflite.dart';
 
 class LocalRepository {
   Future<Either<Failure, void>> saveButton(ButtonModel button) async {
@@ -62,7 +63,10 @@ class LocalRepository {
     final db = await DatabaseHelper.database;
 
     try {
-      await db.insert(DatabaseHelper.ipTable, {'ipAddress': ipAddress});
+      await db.insert(DatabaseHelper.ipTable, {
+        'id': 1,
+        'ipAddress': ipAddress,
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
       return const Right(null);
     } catch (e) {
       return Left(Failure(e.toString()));

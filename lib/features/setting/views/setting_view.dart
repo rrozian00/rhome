@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rhome/features/button_list/views/button_list_view.dart';
 import 'package:rhome/features/button_list/cubit/button_list_cubit.dart';
@@ -51,8 +52,8 @@ class SettingView extends StatelessWidget {
                         ),
 
                         ListTile(
-                          leading: Icon(Icons.help),
-                          title: Text("Customize IP"),
+                          leading: Icon(Icons.location_on_outlined),
+                          title: Text("IP Address"),
                           onTap: () {
                             _showIpAddressDialog(context, state);
                           },
@@ -90,7 +91,20 @@ _showIpAddressDialog(BuildContext context, SettingState state) {
               controller: ipC,
               decoration: InputDecoration(hintText: "Masukkan alamat IP baru"),
             ),
-            Text("Example : 192.168.1.11"),
+            Row(
+              children: [
+                Text("Example : 192.168.1.11"),
+                IconButton(
+                  icon: Icon(Icons.copy),
+                  onPressed: () {
+                    Clipboard.setData(ClipboardData(text: "192.168.1.11"));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Copied to clipboard!")),
+                    );
+                  },
+                ),
+              ],
+            ),
             ElevatedButton(
               onPressed: () {
                 context.read<SettingBloc>().add(

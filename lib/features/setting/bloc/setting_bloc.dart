@@ -21,7 +21,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     emit(SettingLoading());
     final version = await getAppVersion();
     final resIp = await localRepo.getIpFromLocal();
-    final ipAddress = resIp.fold((l) => "", (r) => r);
+    final ipAddress = resIp.fold((l) => " - ", (r) => r);
     emit(SettingLoaded(appVersion: version, ipAdress: ipAddress));
   }
 

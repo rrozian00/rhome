@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../error/failure.dart';
 import 'dart:convert';
@@ -16,6 +17,7 @@ class HttpResponseHelper {
         return Right(false);
       }
     } catch (e) {
+      debugPrint(e.toString());
       return Left(Failure("Unexpexted error $e"));
     }
   }

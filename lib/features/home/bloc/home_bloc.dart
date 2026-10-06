@@ -31,12 +31,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     LoadRelayStatusEvent event,
     Emitter<HomeState> emit,
   ) async {
+    emit(HomeLoading());
     final ip = await getIpAddress();
     final relayStatusRes = await httpResponseHelper.getRelayStatus(ip);
     final buttons = await getButtons();
     final connectionRes = await httpResponseHelper.getResponseStatus(ip);
-
-    emit(HomeLoading());
 
     final error = connectionRes.fold((l) => l, (r) => null);
     if (error != null) {

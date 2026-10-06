@@ -24,7 +24,7 @@ class InfoSection extends StatelessWidget {
               Text("IP Address : ${curentState.ipAdress}"),
               Text(
                 "App Version : ${curentState.appVersion}",
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: Colors.grey, fontSize: 12),
               ),
 
               Padding(

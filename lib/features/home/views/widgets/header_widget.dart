@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rhome/features/home/bloc/home_event.dart';
 import 'package:rhome/features/setting/bloc/setting_bloc.dart';
 
 import '../../../setting/views/setting_view.dart';
@@ -59,7 +60,12 @@ class HeaderWidget extends StatelessWidget {
 
           Row(
             children: [
-              _showHelpDialog(context),
+              IconButton(
+                onPressed: () {
+                  context.read<HomeBloc>().add(LoadRelayStatusEvent());
+                },
+                icon: Icon(Icons.refresh),
+              ),
 
               IconButton(
                 onPressed: () {
@@ -75,32 +81,4 @@ class HeaderWidget extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget _showHelpDialog(BuildContext context) {
-  return IconButton(
-    onPressed: () {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text("Instruction"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              spacing: 16,
-              children: [
-                Text("Help"),
-
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text("Oke", style: TextStyle(color: Colors.green)),
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    },
-    icon: Icon(Icons.help_outline_outlined, color: Colors.black),
-  );
 }
